@@ -1,0 +1,29 @@
+# -*- mode: ruby -*-
+
+task :install_gtest do
+  print `wget https://googletest.googlecode.com/files/gtest-1.7.0.zip`
+  print `unzip gtest-1.7.0.zip`
+  print `rm gtest-1.7.0.zip`
+  print `cd gtest-1.7.0`
+  print `cmake .`
+  print `make`
+end
+
+task :remove_gtest do
+  `rm -r gtest-1.7.0`
+end
+
+task :test do
+  args = ARGV.slice(1, ARGV.size)
+  args.each do |target|
+    puts "***** TEST #{target} *****"
+    gtest_dir     = "./gtest-1.7.0"
+    include_dir   = "#{gtest_dir}/include"
+    libgtest      = "#{gtest_dir}/libgtest.a"
+    libgtest_main = "#{gtest_dir}/libgtest_main.a"
+    print `g++ #{target}.cc -I#{include_dir} -Lpthread #{libgtest} #{libgtest_main} -o #{target}`
+    Process.waitpid(spawn("./#{target}", :out => STDOUT, :err => STDOUT))
+    `rm #{target}`
+  end
+  args.each{|v| task(v.to_sym){} }
+end
