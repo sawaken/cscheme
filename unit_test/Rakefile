@@ -4,9 +4,10 @@ task :install_gtest do
   print `wget https://googletest.googlecode.com/files/gtest-1.7.0.zip`
   print `unzip gtest-1.7.0.zip`
   print `rm gtest-1.7.0.zip`
-  print `cd gtest-1.7.0`
-  print `cmake .`
-  print `make`
+  Dir.chdir("./gtest-1.7.0") do
+    print `cmake .`
+    print `make`
+  end
 end
 
 task :remove_gtest do
