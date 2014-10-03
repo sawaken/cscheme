@@ -23,7 +23,8 @@ task :test do
     libgtest      = "#{gtest_dir}/libgtest.a"
     libgtest_main = "#{gtest_dir}/libgtest_main.a"
     print `g++ #{target}.cc -I#{include_dir} -Lpthread #{libgtest} #{libgtest_main} -o #{target}`
-    Process.waitpid(spawn("./#{target}", :out => STDOUT, :err => STDOUT))
+    Process.waitpid(spawn("./#{target} --gtest_output=xml:test_report.xml",
+                          :out => STDOUT, :err => STDOUT))
     `rm #{target}`
   end
   args.each{|v| task(v.to_sym){} }
