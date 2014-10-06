@@ -3,21 +3,12 @@
 #include "object.h"
 #include "parse.h"
 
-Object* ParseExp(char exp[],
-		 Object* (*cons)(Object*, Object*),
-		 Object* (*symbol)(char[]),
-		 Object* (*exception)(char[]))
+Object* ParseExp(char exp[], Generator* gen)
 {
   return iParseExp(exp, cons, symbol, exception, 0, strlen(exp), MODE_NONE);
 }
 
-static Object* iParseExp(char exp[],
-			 Object* (*cons)(Object*, Object*),
-			 Object* (*symbol)(char[]),
-			 Object* (*exception)(char[]),
-			 int begin,
-			 int end,
-			 ParseMode mode)
+static Object* iParseExp(char exp[], Generator* gen, int begin, int end, ParseMode mode)
 {
   return NULL;
 }
