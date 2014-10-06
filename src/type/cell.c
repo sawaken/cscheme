@@ -22,8 +22,8 @@ static void release(Object* obj)
 {
   Object* car = pull(obj)->car;
   Object* cdr = pull(obj)->cdr;
-  con(car)->unreferred(car);
-  con(cdr)->unreferred(cdr);
+  Con(car)->unreferred(car);
+  Con(cdr)->unreferred(cdr);
 }
 
 static void referred(Object* obj)
@@ -46,6 +46,6 @@ static Object* new(Object* car, Object* cdr)
 }
 
 t_Cell Cell = {
-  release, referred, unreferred,
+  {release, referred, unreferred},
   new
 };

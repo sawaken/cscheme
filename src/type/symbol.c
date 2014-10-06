@@ -47,6 +47,6 @@ static char* to_s(Object* obj)
 
 
 t_Symbol Symbol = {
-  release, referred, unreferred,
+  {release, referred, unreferred},
   new, to_s
 };

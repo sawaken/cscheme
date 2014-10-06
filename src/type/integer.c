@@ -35,8 +35,8 @@ static void unreferred(Object* obj)
 static Object* new(int i)
 {
   Data* data = malloc(sizeof(Data));
-  strcpy(data->name, name);
-  return NewObject(Type, data);
+  data->i = i;
+  return New(Type, data);
 }
 
 static int to_i(Object* obj)
@@ -45,6 +45,6 @@ static int to_i(Object* obj)
 }
 
 t_Integer Integer = {
-  release, referred, unrefferred,
+  {release, referred, unreferred},
   new, to_i
 };
