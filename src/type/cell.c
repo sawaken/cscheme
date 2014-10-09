@@ -55,7 +55,6 @@ static Object* new(Object* meta, Object* car, Object* cdr)
   data->car = car;
   data->cdr = cdr;
   return MetaObject.gen(meta, Type, data);
-  return New(Type, data);
 }
 
 t_Cell Cell = {

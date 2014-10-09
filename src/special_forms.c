@@ -1,23 +1,5 @@
 #include "type/type.h"
 
-Object* Body_f, If_f, CallCC_f, Lambda_f;
-
-
-static void body(Object* meta, Object* cont)
-{
-  Object* form = Continuation.top(cont);
-  if (Form.restNum(form) == 1) {
-
-    Object* tail = Form.next(form);
-
-    if (IsA(tail, &Cell)) {
-      Continuation.replace(cont, Form.new(meta, tail));
-    } else {
-      Continuation.replace(cont, tail);
-    }
-  }
-}
-
 static void _if(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
@@ -58,11 +40,14 @@ static void lambda(Object* meta, Object* cont)
   Continuation.replace(cont, lambda);
 }
 
-void InitSpecialForms(Object* meta)
-{
-  Body_f   = SpecialForm.new(meta, "body",    body,     1, LEN_INF);
-  If_f     = SpecialForm.new(meta, "if",      _if,      2, 3);
-  CallCC_f = SpecialForm.new(meta, "call/cc", call_cc,  1, 1);
-  Lambda_f = SpecialForm.new(meta, "lambda",  lambda,   2, LEN_INF);
-}
 
+SFList SFListGen(Object* meta)
+{
+  SFList* ls = malloc(sizeof(SFList));
+  ls->n = 3;
+  ls->sf = malloc(ls->n * sizeof(Object*));
+  ls->sf[0] = SpecialForm.new(meta, "if",      _if,      2, 3);
+  ls->sf[1] = SpecialForm.new(meta, "call/cc", call_cc,  1, 1);
+  ls->sf[2] = SpecialForm.new(meta, "lambda",  lambda,   2, LEN_INF);
+  return ls;
+}

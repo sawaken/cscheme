@@ -80,6 +80,7 @@ typedef struct
   void (*back)(Object* form, Object* obj);
   bool (*hasUnevaluated)(Object* form);
   bool (*commandEvaluated)(Object* form);
+  bool (*isBody)(Object* form);
 } t_Form;
 extern t_Form Form;
 
@@ -115,11 +116,6 @@ typedef struct
   Object* (*new)(Object* param_list, Object** exps, int n);
 } t_Lambda;
 extern t_Lambda Lambda;
-
-typedef struct
-{
-
-}
 
 
 bool IsA(Object* obj, void* type);
