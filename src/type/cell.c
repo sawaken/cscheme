@@ -14,16 +14,29 @@ typedef struct
 
 static Data* pull(Object* obj)
 {
-  assert(obj->type == Type);
+  assert(IsA(obj, Type));
   return (Data*)(obj->data);
+}
+
+static Object* car(Object* obj)
+{
+  return pull(obj)->car;
+}
+
+static Object* cdr(Object* obj)
+{
+  return pull(obj)->cdr;
+}
+
+static void apply(Object* obj, int (*proc)(Object*))
+{
+  proc(car(obj));
+  proc(cdr(obj));
 }
 
 static void release(Object* obj)
 {
-  Object* car = pull(obj)->car;
-  Object* cdr = pull(obj)->cdr;
-  Con(car)->unreferred(car);
-  Con(cdr)->unreferred(cdr);
+ 
 }
 
 static void referred(Object* obj)
@@ -36,16 +49,16 @@ static void unreferred(Object* obj)
 
 }
 
-
-static Object* new(Object* car, Object* cdr)
+static Object* new(Object* meta, Object* car, Object* cdr)
 {
   Data* data = malloc(sizeof(Data));
   data->car = car;
   data->cdr = cdr;
+  return MetaObject.gen(meta, Type, data);
   return New(Type, data);
 }
 
 t_Cell Cell = {
-  {release, referred, unreferred},
-  new
+  {NULL, apply, NULL, NULL},
+  new, car, cdr
 };
