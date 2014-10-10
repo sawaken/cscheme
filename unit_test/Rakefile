@@ -50,8 +50,10 @@ end
 # test targets
 #--------------------
 
+desc "run sample test"
 file "sample" => ["sample.o", LIB].flatten do |t|
   sh "#{CPP_COMPILER} -pthread -o #{t.name}.out #{t.prerequisites.join(' ')}"
+  sh "./#{t.name}.out"
 end
 
 file "type/test_integer" => ["type/test_integer.o",
