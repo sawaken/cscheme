@@ -1,5 +1,8 @@
 #include <stdlib.h>
+#include <assert.h>
 #include "type.h"
+
+static void release(Object*);
 
 static void* Type = &MetaObject;
 
@@ -8,6 +11,12 @@ typedef struct
   int size, max_size;
   Object** objects;
 } Data;
+
+static Data* pull(Object* obj)
+{
+  assert(obj->type == Type);
+  return (Data*)(obj->data);
+}
 
 
 static void referred(Object* obj)
@@ -18,7 +27,7 @@ static void referred(Object* obj)
     c->referred(obj);
   }
 
-  obj->ref_count++;
+  obj->gc_info.ref_count++;
 }
 
 static void unreferred(Object* obj)
@@ -29,10 +38,10 @@ static void unreferred(Object* obj)
     c->unreferred(obj);
   }
 
-  obj->gcd.unref_count++;
+  obj->gc_info.unref_count++;
 
-  if (obj->gcd.ref_count == obj->gcd.unref_count) {
-    Release(obj);
+  if (obj->gc_info.ref_count == obj->gc_info.unref_count) {
+    release(obj);
   }
 }
 
@@ -40,14 +49,14 @@ static void release(Object* obj)
 {
   Controller* c = Con(obj);
   
-  if (obj->gcd.death_flag) {
-    return 0;
+  if (obj->gc_info.death_flag) {
+    return;
   } else {
-    obj->gcd.death_flag = 1;
+    obj->gc_info.death_flag = 1;
   }
 
   if (c->apply != NULL) {
-    c->apply(obj, Unreferred);
+    c->apply(obj, unreferred);
   }
 
   if (c->release != NULL) {
@@ -60,10 +69,10 @@ static void release(Object* obj)
 
 static void add(Object* meta, Object* obj)
 {
-  if (size == max_size) {
+  if (pull(meta)->size == pull(meta)->max_size) {
     
   }
-  objects[size++] = obj;
+  pull(meta)->objects[pull(meta)->size++] = obj;
 }
 
 static Object* gen(Object* meta, void* type, void* data)
@@ -74,7 +83,9 @@ static Object* gen(Object* meta, void* type, void* data)
   object->data     = data;
   
   add(meta, object);
-  Con(object)->apply(object, referred);
+  if (Con(object)->apply != NULL) {
+    Con(object)->apply(object, referred);
+  }
   return object;
 }
 
@@ -96,4 +107,4 @@ static Object* new(int init_max_size)
 t_MetaObject MetaObject = {
   {NULL, NULL, NULL, NULL},
   new, gen
-}
+};

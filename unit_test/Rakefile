@@ -1,21 +1,24 @@
 # -*- mode: ruby -*-
 
 CPP_COMPILER = "g++"
+C_COMPILER = "gcc"
 GTEST_DIR = "gtest-1.7.0"
-
+SRC_DIR = "../src"
+LIB = ["libgtest.a", "libgtest_main.a"]
 
 task :all => ["clean", "run"]
 task :default => "run"
 
 task :run => "sample" do
   puts "---- run ----"
-  sh "./sample"
+  sh "./sample.out"
 end
 
 task :clean do
   puts "---- clean ----"
-  sh "rm -f ./*.o ./*.a"
-  sh "rm -f sample"
+  sh "rm -f ./*.a"
+  sh "rm -f ./*.o ./type/*.o"
+  sh "rm -f ./*.out ./type/*.out"
 end
 
 file "gtest_build" do
@@ -36,9 +39,27 @@ file "libgtest_main.a" => "gtest_build" do
 end
 
 rule ".o" => ".cc" do |t|
-  sh "#{CPP_COMPILER} -I#{GTEST_DIR}/include -c #{t.source} -o #{t.name}"
+  sh "#{CPP_COMPILER} -I#{GTEST_DIR}/include -I#{SRC_DIR} -c #{t.source} -o #{t.name} -g"
 end
 
-file "sample" => ["sample.o", "libgtest.a", "libgtest_main.a"] do |t|
-  sh "#{CPP_COMPILER} -pthread -o #{t.name} #{t.prerequisites.join(' ')}"
+rule %r{^\.\.\/src\/((.+)\/)*(.+)\.o} => "%X.c" do |t|
+  sh "#{C_COMPILER} -I#{GTEST_DIR}/include -I#{SRC_DIR} -c #{t.source} -o #{t.name} -g"
+end
+
+
+# test targets
+#--------------------
+
+file "sample" => ["sample.o", LIB].flatten do |t|
+  sh "#{CPP_COMPILER} -pthread -o #{t.name}.out #{t.prerequisites.join(' ')}"
+end
+
+file "type/test_integer" => ["type/test_integer.o",
+                             "../src/type/meta_object.o",
+                             "../src/type/integer.o",
+                             "../src/type/type.o",
+                             LIB].flatten do |t|
+
+  sh "#{CPP_COMPILER} -pthread -o #{t.name}.out #{t.prerequisites.join(' ')} -g"
+  sh "./#{t.name}.out"
 end

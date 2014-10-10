@@ -2,4 +2,5 @@
 *#
 a.out
 unit_test/gtest_build
+*.o
 

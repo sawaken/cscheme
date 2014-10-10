@@ -16,27 +16,11 @@ static Data* pull(Object* obj)
   return (Data*)(obj->data);
 }
 
-
-static void release(Object* obj)
-{
-
-}
-
-static void referred(Object* obj)
-{
-
-}
-
-static void unreferred(Object* obj)
-{
-
-}
-
-static Object* new(int i)
+static Object* new(Object* meta, int i)
 {
   Data* data = malloc(sizeof(Data));
   data->i = i;
-  return New(Type, data);
+  return MetaObject.gen(meta, Type, data);
 }
 
 static int to_i(Object* obj)
@@ -45,6 +29,6 @@ static int to_i(Object* obj)
 }
 
 t_Integer Integer = {
-  {release, referred, unreferred},
+  {NULL, NULL, NULL, NULL},
   new, to_i
 };

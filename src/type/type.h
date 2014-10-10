@@ -1,10 +1,16 @@
+#include <stdbool.h>
+
 #ifndef TYPE_H
 #define TYPE_H
 
+#ifndef __cplusplus
+#define new New
+#endif
+
 #define LEN_INF 100000
 
-
-typedef struct
+typedef struct Object Object;
+struct Object
 {
   void* type;
   void* data;
@@ -14,9 +20,9 @@ typedef struct
     int death_flag;
     int reachable_flag;
   } gc_info;
-  struct Object* meta_obj;
+  Object* meta_obj;
   void* debug_info;
-} Object;
+};
 
 typedef struct
 {
@@ -29,7 +35,7 @@ typedef struct
 typedef struct
 {
   void (*release)(Object* obj);
-  void (*apply)(Object* obj, int (*proc)(Object*));
+  void (*apply)(Object* obj, void (*proc)(Object*));
   void (*referred)(Object* obj);
   void (*unreferred)(Object* obj);
 } Controller;
@@ -37,16 +43,16 @@ typedef struct
 typedef struct
 {
   Controller con;
-  Object* (*new)(int init_max_size);
+  Object* (*New)(int init_max_size);
   Object* (*gen)(Object* meta, void* type, void* data);
-  Object* (*sweep)(Object* meta, void);
+  Object* (*sweep)(Object* meta);
 } t_MetaObject;
 extern t_MetaObject MetaObject;
 
 typedef struct
 {
   Controller con;
-  Object* (*new)(char* name);
+  Object* (*New)(char* name);
   char* (*to_s)(Object* symbol);
 } t_Symbol;
 extern t_Symbol Symbol;
@@ -54,7 +60,7 @@ extern t_Symbol Symbol;
 typedef struct
 {
   Controller con;
-  Object* (*new)(int i);
+  Object* (*New)(Object* meta, int i);
   int (*to_i)(Object* integer);
 } t_Integer;
 extern t_Integer Integer;
@@ -62,14 +68,14 @@ extern t_Integer Integer;
 typedef struct
 {
   Controller con;
-  Object* (*new)(Object* car, Object* cdr);
+  Object* (*New)(Object* car, Object* cdr);
 } t_Cell;
 extern t_Cell Cell;
 
 typedef struct
 {
   Controller con;
-  Object* (*new)(Object* env, Object* exp);
+  Object* (*New)(Object* env, Object* exp);
   Object* (*pos)(Object* form);
   Object* (*restNum)(Object* form);
   Object* (*next)(Object* form);
@@ -87,7 +93,7 @@ extern t_Form Form;
 typedef struct
 {
   Controller con;
-  Object* (*new)(Object* cont);
+  Object* (*New)(Object* cont);
   Object* (*dup)(Object* cont);
   Object* (*top)(Object* cont);
   void (*pop)(Object* cont);
@@ -104,7 +110,7 @@ extern t_Continuation Continuation;
 typedef struct
 {
   Controller con;
-  Object* (*new)(Object* meta, char* name, void (*action)(Object* cont),
+  Object* (*New)(Object* meta, char* name, void (*action)(Object* cont),
 		 int len_min, int len_max);
   void (*doAction)(Object* meta, Object* sf, Object* cont);
 } t_SpecialForm;
@@ -113,7 +119,7 @@ extern t_SpecialForm SpecialForm;
 typedef struct
 {
   Controller con;
-  Object* (*new)(Object* param_list, Object** exps, int n);
+  Object* (*New)(Object* param_list, Object** exps, int n);
 } t_Lambda;
 extern t_Lambda Lambda;
 
