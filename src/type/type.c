@@ -1,15 +1,11 @@
-#include <stdlib.h>
 #include "type.h"
 
-Object* New(void* type, void* data)
+bool IsA(Object* obj, void* type)
 {
-  Object* object = malloc(sizeof(Object));
-  object->type = type;
-  object->data = data;
-  return object;
+  return obj->type == type;
 }
 
 Controller* Con(Object* obj)
 {
-  return (Controller*)obj->type;
+  return (Controller*)(obj->type);
 }
