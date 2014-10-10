@@ -1,31 +1,44 @@
 # -*- mode: ruby -*-
 
-task :install_gtest do
-  print `wget https://googletest.googlecode.com/files/gtest-1.7.0.zip`
-  print `unzip gtest-1.7.0.zip`
-  print `rm gtest-1.7.0.zip`
-  Dir.chdir("./gtest-1.7.0") do
-    print `cmake .`
-    print `make`
+CPP_COMPILER = "g++"
+GTEST_DIR = "gtest-1.7.0"
+
+
+task :all => ["clean", "run"]
+task :default => "run"
+
+task :run => "sample" do
+  puts "---- run ----"
+  sh "./sample"
+end
+
+task :clean do
+  puts "---- clean ----"
+  sh "rm -f ./*.o ./*.a"
+  sh "rm -f sample"
+end
+
+file "gtest_build" do
+  puts "--- build gtest ----"
+  sh "mkdir gtest_build"
+  Dir.chdir("gtest_build") do
+    sh "cmake ../#{GTEST_DIR}"
+    sh "make gtest gtest_main"
   end
 end
 
-task :remove_gtest do
-  `rm -r gtest-1.7.0`
+file "libgtest.a" => "gtest_build" do
+  sh "cp ./gtest_build/libgtest.a ./"
 end
 
-task :test do
-  args = ARGV.slice(1, ARGV.size)
-  args.each do |target|
-    puts "***** TEST #{target} *****"
-    gtest_dir     = "./gtest-1.7.0"
-    include_dir   = "#{gtest_dir}/include"
-    libgtest      = "#{gtest_dir}/libgtest.a"
-    libgtest_main = "#{gtest_dir}/libgtest_main.a"
-    print `g++ #{target}.cc -I#{include_dir} -Lpthread #{libgtest} #{libgtest_main} -o #{target}`
-    Process.waitpid(spawn("./#{target} --gtest_output=xml:test_report.xml",
-                          :out => STDOUT, :err => STDOUT))
-    `rm #{target}`
-  end
-  args.each{|v| task(v.to_sym){} }
+file "libgtest_main.a" => "gtest_build" do
+  sh "cp ./gtest_build/libgtest_main.a ./"
+end
+
+rule ".o" => ".cc" do |t|
+  sh "#{CPP_COMPILER} -I#{GTEST_DIR}/include -c #{t.source} -o #{t.name}"
+end
+
+file "sample" => ["sample.o", "libgtest.a", "libgtest_main.a"] do |t|
+  sh "#{CPP_COMPILER} -pthread -o #{t.name} #{t.prerequisites.join(' ')}"
 end
