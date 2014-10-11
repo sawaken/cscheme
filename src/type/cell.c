@@ -34,21 +34,6 @@ static void apply(Object* obj, int (*proc)(Object*))
   proc(cdr(obj));
 }
 
-static void release(Object* obj)
-{
- 
-}
-
-static void referred(Object* obj)
-{
-
-}
-
-static void unreferred(Object* obj)
-{
-
-}
-
 static Object* new(Object* meta, Object* car, Object* cdr)
 {
   Data* data = malloc(sizeof(Data));

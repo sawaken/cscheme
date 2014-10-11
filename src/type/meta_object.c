@@ -1,16 +1,28 @@
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "type.h"
 
+static void referred(Object*);
 static void release(Object*);
 
 static void* Type = &MetaObject;
 
+typedef  struct
+{
+  int ref_count;
+  int unref_count;
+  int death_flag;
+  int reachable_flag;
+} GCInfo;
+
 typedef struct
 {
-  int size, max_size;
+  int size, pos, max_size;
   Object** objects;
+  GCInfo** gc_infos;
 } Data;
+
 
 static Data* pull(Object* obj)
 {
@@ -18,29 +30,87 @@ static Data* pull(Object* obj)
   return (Data*)(obj->data);
 }
 
+static GCInfo* gc_info(Object* obj)
+{
+  return pull(obj->meta_obj)->gc_infos[obj->meta_obj_pos];
+}
+
+static void add(Object* meta, Object* obj)
+{
+  if (pull(meta)->size == pull(meta)->max_size) {
+    // raise exception
+    exit(1);
+  }
+
+  if (pull(meta)->pos == pull(meta)->max_size) {
+    // resort
+  }
+
+  int pos = pull(meta)->pos++;
+  pull(meta)->objects[pos] = obj;
+  obj->meta_obj     = meta;
+  obj->meta_obj_pos = pos;
+  pull(meta)->gc_infos[pos] = malloc(sizeof(GCInfo));
+  memset(pull(meta)->gc_infos[pos], 0, sizeof(GCInfo));
+  pull(meta)->size++;
+}
+
+
+/*
+  public methods
+*/
+
+static Object* new(int init_max_size)
+{
+  Data* data = malloc(sizeof(Data));
+  data->max_size = init_max_size;
+  data->objects  = malloc(init_max_size * sizeof(Object*));
+  data->gc_infos = malloc(init_max_size * sizeof(GCInfo*));
+  data->size = data->pos = 0;
+
+  Object* self = malloc(sizeof(Object));
+  self->meta_obj = NULL;
+  self->type     = Type;
+  self->data     = data;
+
+  return self;
+}
+
+static Object* gen(Object* meta, void* type, void* data)
+{
+  Object* object = malloc(sizeof(Object));
+  object->type     = type;
+  object->data     = data;
+  add(meta, object);
+
+  if (Con(object)->apply != NULL) {
+    Con(object)->apply(object, referred);
+  }
+  return object;
+}
 
 static void referred(Object* obj)
 {
   Controller* c = Con(obj);
 
-  if (c->referred != NULL) {
-    c->referred(obj);
+  if (c->onReferred != NULL) {
+    c->onReferred(obj);
   }
 
-  obj->gc_info.ref_count++;
+  gc_info(obj)->ref_count++;
 }
 
 static void unreferred(Object* obj)
 {
   Controller* c = Con(obj);
 
-  if (c->unreferred != NULL) {
-    c->unreferred(obj);
+  if (c->onUnreferred != NULL) {
+    c->onUnreferred(obj);
   }
 
-  obj->gc_info.unref_count++;
+  gc_info(obj)->unref_count++;
 
-  if (obj->gc_info.ref_count == obj->gc_info.unref_count) {
+  if (gc_info(obj)->ref_count == gc_info(obj)->unref_count) {
     release(obj);
   }
 }
@@ -49,11 +119,10 @@ static void release(Object* obj)
 {
   Controller* c = Con(obj);
   
-  if (obj->gc_info.death_flag) {
+  if (gc_info(obj)->death_flag)
     return;
-  } else {
-    obj->gc_info.death_flag = 1;
-  }
+
+  gc_info(obj)->death_flag = 1;
 
   if (c->apply != NULL) {
     c->apply(obj, unreferred);
@@ -61,50 +130,24 @@ static void release(Object* obj)
 
   if (c->release != NULL) {
     c->release(obj);
+  } else {
+    free(obj->data);
+    free(obj);
   }
 
-  release(obj->data);
-  release(obj);
+  free(pull(obj->meta_obj)->gc_infos[obj->meta_obj_pos]);
+  pull(obj->meta_obj)->objects[obj->meta_obj_pos] = NULL;
+  pull(obj->meta_obj)->size--;
 }
 
-static void add(Object* meta, Object* obj)
+static int sweep(Object* obj)
 {
-  if (pull(meta)->size == pull(meta)->max_size) {
-    
-  }
-  pull(meta)->objects[pull(meta)->size++] = obj;
-}
-
-static Object* gen(Object* meta, void* type, void* data)
-{
-  Object* object = malloc(sizeof(Object));
-  object->meta_obj = meta;
-  object->type     = type;
-  object->data     = data;
   
-  add(meta, object);
-  if (Con(object)->apply != NULL) {
-    Con(object)->apply(object, referred);
-  }
-  return object;
+  return 0;
 }
 
-static Object* new(int init_max_size)
-{
-  Data* data = malloc(sizeof(Data));
-  data->max_size = init_max_size;
-  data->objects  = malloc(init_max_size * sizeof(Object*));
-  data->size     = 0;
-
-  Object* self = malloc(sizeof(Object));
-  self->meta_obj = self;
-  self->type     = Type;
-  self->data     = data;
-
-  return self;
-}
 
 t_MetaObject MetaObject = {
   {NULL, NULL, NULL, NULL},
-  new, gen
+  new, gen, referred, unreferred, release, sweep
 };

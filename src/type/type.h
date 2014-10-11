@@ -14,14 +14,8 @@ struct Object
 {
   void* type;
   void* data;
-  struct {
-    int ref_count;
-    int unref_count;
-    int death_flag;
-    int reachable_flag;
-  } gc_info;
   Object* meta_obj;
-  void* debug_info;
+  int meta_obj_pos;
 };
 
 typedef struct
@@ -36,8 +30,8 @@ typedef struct
 {
   void (*release)(Object* obj);
   void (*apply)(Object* obj, void (*proc)(Object*));
-  void (*referred)(Object* obj);
-  void (*unreferred)(Object* obj);
+  void (*onReferred)(Object* obj);
+  void (*onUnreferred)(Object* obj);
 } Controller;
 
 typedef struct
@@ -45,14 +39,17 @@ typedef struct
   Controller con;
   Object* (*New)(int init_max_size);
   Object* (*gen)(Object* meta, void* type, void* data);
-  Object* (*sweep)(Object* meta);
+  void (*referred)(Object* obj);
+  void (*unreferred)(Object* obj);
+  void (*release)(Object* obj);
+  int (*sweep)(Object* obj);
 } t_MetaObject;
 extern t_MetaObject MetaObject;
 
 typedef struct
 {
   Controller con;
-  Object* (*New)(char* name);
+  Object* (*New)(Object* meta, char* name);
   char* (*to_s)(Object* symbol);
 } t_Symbol;
 extern t_Symbol Symbol;
@@ -68,14 +65,16 @@ extern t_Integer Integer;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* car, Object* cdr);
+  Object* (*New)(Object* meta, Object* car, Object* cdr);
+  Object* (*car)(Object* cell);
+  Object* (*cdr)(Object* cell);
 } t_Cell;
 extern t_Cell Cell;
 
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* env, Object* exp);
+  Object* (*New)(Object* mata, Object* env, Object* exp);
   Object* (*pos)(Object* form);
   Object* (*restNum)(Object* form);
   Object* (*next)(Object* form);
@@ -93,7 +92,7 @@ extern t_Form Form;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* cont);
+  Object* (*New)(Object* meta, Object* cont);
   Object* (*dup)(Object* cont);
   Object* (*top)(Object* cont);
   void (*pop)(Object* cont);
@@ -119,9 +118,21 @@ extern t_SpecialForm SpecialForm;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* param_list, Object** exps, int n);
+  Object* (*New)(Object* meta, Object* param_list, 
+		 Object** exps, int n);
 } t_Lambda;
 extern t_Lambda Lambda;
+
+typedef struct
+{
+  Controller con;
+  Object* (*New)(Object* meta, Object* ref);
+  Object* (*ref)(Object* dummy);
+  bool (*isReleased)(Object* dummy);
+  int (*ref_count)(Object* dummy);
+  int (*unref_count)(Object* dummy);
+} t_Dummy;
+extern t_Dummy Dummy;
 
 
 bool IsA(Object* obj, void* type);
