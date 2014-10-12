@@ -14,9 +14,9 @@ LIB = ["libgtest.a", "libgtest_main.a"]
 TESTS = {
   "sample" => ["sample.o"],
   "type/test_integer" => ["type/test_integer.o",
-                             "../src/type/meta_object.o",
-                             "../src/type/integer.o",
-                             "../src/type/type.o"],
+                          "../src/type/meta_object.o",
+                          "../src/type/integer.o",
+                          "../src/type/type.o"],
   "type/test_cell" =>  ["type/test_cell.o",
                         "../src/type/meta_object.o",
                         "../src/type/cell.o",
@@ -41,6 +41,7 @@ task :clean do
   sh "rm -f ./*.a"
   sh "rm -f ./*.o ./type/*.o"
   sh "rm -f ./*.out ./type/*.out"
+  sh "rm -f ../src/*.o ../src/type/*.o"
 end
 
 file "gtest_build" do

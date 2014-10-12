@@ -19,9 +19,10 @@ static Data* pull(Object* obj)
   return (Data*)(obj->data);
 }
 
-static void release(Object* obj)
+static bool release(Object* obj)
 {
   pull(obj)->is_released = true;
+  return false;
 }
 
 static void apply(Object* obj, void (*proc)(Object*))

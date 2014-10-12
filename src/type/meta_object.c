@@ -128,9 +128,7 @@ static void release(Object* obj)
     c->apply(obj, unreferred);
   }
 
-  if (c->release != NULL) {
-    c->release(obj);
-  } else {
+  if (c->release == NULL || c->release(obj)) {
     free(obj->data);
     free(obj);
   }

@@ -28,7 +28,7 @@ typedef struct
 
 typedef struct
 {
-  void (*release)(Object* obj);
+  bool (*release)(Object* obj);
   void (*apply)(Object* obj, void (*proc)(Object*));
   void (*onReferred)(Object* obj);
   void (*onUnreferred)(Object* obj);
