@@ -12,30 +12,35 @@ typedef struct
 } Data;
 
 
-static Data* pull(Object* obj)
+static bool empty(Object* obj)
 {
-  assert(IsA(obj, Type));
-  return (Data*)(obj->data);
+  return pull(obj)->car == NULL;
 }
 
 static Object* car(Object* obj)
 {
+  assert(!empty(obj));
   return pull(obj)->car;
 }
 
 static Object* cdr(Object* obj)
 {
+  assert(!empty(obj));
   return pull(obj)->cdr;
 }
 
 static void apply(Object* obj, int (*proc)(Object*))
 {
-  proc(car(obj));
-  proc(cdr(obj));
+  if (!empty(obj)) {
+    proc(car(obj));
+    proc(cdr(obj));
+  }
 }
 
 static Object* new(Object* meta, Object* car, Object* cdr)
 {
+  assert((car != NULL && cdr != NULL) || (car == NULL && cdr == NULL));
+
   Data* data = malloc(sizeof(Data));
   data->car = car;
   data->cdr = cdr;
@@ -44,5 +49,5 @@ static Object* new(Object* meta, Object* car, Object* cdr)
 
 t_Cell Cell = {
   {NULL, apply, NULL, NULL},
-  new, car, cdr
+  new, car, cdr, empty
 };

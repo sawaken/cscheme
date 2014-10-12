@@ -24,3 +24,14 @@ TEST(car_cdr, case1)
   ASSERT_EQ(1, Dummy.unref_count(dum2));
   ASSERT_EQ(true, Dummy.isReleased(dum2));  
 }
+
+
+TEST(empty_cell, case1)
+{
+  Object* meta = MetaObject.New(10);
+  Object* ecell = Cell.New(meta, NULL, NULL);
+  Object* cell  = Cell.New(meta, ecell, ecell);
+
+  ASSERT_EQ(true, Cell.empty(ecell));
+  ASSERT_EQ(false, Cell.empty(cell));
+}

@@ -7,37 +7,21 @@ static void* Type = &Symbol;
 
 typedef struct
 {
-  char name[100];
+  char* name;
 } Data;
 
-
-static Data* pull(Object* obj)
+static bool release(Object* obj)
 {
-  assert(obj->type == Type);
-  return (Data*)(obj->data);
+  free(pull(obj)->name);
+  return true;
 }
 
-
-static void release(Object* obj)
-{
-
-}
-
-static void referred(Object* obj)
-{
-
-}
-
-static void unreferred(Object* obj)
-{
-
-}
-
-static Object* new(char* name)
+static Object* new(Object* meta, char* name)
 {
   Data* data = malloc(sizeof(Data));
+  data->name = malloc((strlen(name) + 1) * sizeof(char));
   strcpy(data->name, name);
-  return New(Type, data);
+  return MetaObject.gen(meta, Type, data);
 }
 
 static char* to_s(Object* obj)
@@ -47,6 +31,6 @@ static char* to_s(Object* obj)
 
 
 t_Symbol Symbol = {
-  {release, referred, unreferred},
+  {release, NULL, NULL, NULL},
   new, to_s
 };

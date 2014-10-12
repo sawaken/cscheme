@@ -24,12 +24,6 @@ typedef struct
 } Data;
 
 
-static Data* pull(Object* obj)
-{
-  assert(obj->type == Type);
-  return (Data*)(obj->data);
-}
-
 static GCInfo* gc_info(Object* obj)
 {
   return pull(obj->meta_obj)->gc_infos[obj->meta_obj_pos];

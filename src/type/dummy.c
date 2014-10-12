@@ -13,12 +13,6 @@ typedef struct
   bool is_released;
 } Data;
 
-static Data* pull(Object* obj)
-{
-  assert(obj->type == Type);
-  return (Data*)(obj->data);
-}
-
 static bool release(Object* obj)
 {
   pull(obj)->is_released = true;

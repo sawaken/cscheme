@@ -8,6 +8,7 @@
 #endif
 
 #define LEN_INF 100000
+#define pull(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 
 typedef struct Object Object;
 struct Object
@@ -68,23 +69,22 @@ typedef struct
   Object* (*New)(Object* meta, Object* car, Object* cdr);
   Object* (*car)(Object* cell);
   Object* (*cdr)(Object* cell);
+  bool (*empty)(Object* cell);
 } t_Cell;
 extern t_Cell Cell;
 
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* mata, Object* env, Object* exp);
-  Object* (*pos)(Object* form);
-  Object* (*restNum)(Object* form);
+  Object* (*New)(Object* mata, Object* env, Object* exp,
+		 int length, bool body);
+  int (*pos)(Object* form);
+  int (*restNum)(Object* form);
   Object* (*next)(Object* form);
-  Object* (*command)(Object* form);
-  Object* (*evaluatedArg)(Object* form, int pos);
-  Object* (*rawArg)(Object* form, int pos);
-  Object** (*elements)(Object* form, int start_pos);
+  Object* (*evaluatedElement)(Object* form, int position);
+  Object* (*rawElement)(Object* form, int position);
+  Object** (*rawElements)(Object* form, int start_pos);
   void (*back)(Object* form, Object* obj);
-  bool (*hasUnevaluated)(Object* form);
-  bool (*commandEvaluated)(Object* form);
   bool (*isBody)(Object* form);
 } t_Form;
 extern t_Form Form;

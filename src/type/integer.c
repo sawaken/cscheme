@@ -10,12 +10,6 @@ typedef struct
   int i;
 } Data;
 
-static Data* pull(Object* obj)
-{
-  assert(obj->type == Type);
-  return (Data*)(obj->data);
-}
-
 static Object* new(Object* meta, int i)
 {
   Data* data = malloc(sizeof(Data));
