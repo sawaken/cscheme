@@ -6,6 +6,10 @@
 
 static void* Type = &Form;
 
+static int pos(Object* form);
+static Object* evaluatedElement(Object* form, int position);
+static Object* rawElement(Object* form, int position);
+
 typedef struct
 {
   Object* env;
@@ -17,8 +21,8 @@ typedef struct
 
 static bool release(Object* form)
 {
-  free(pull(form)->elements);
-  free(pull(form)->evaluated);
+  free(pull(form)->raw_elements);
+  free(pull(form)->evaluated_elements);
   return true;
 }
 
@@ -47,7 +51,7 @@ static Object* new(Object* meta, Object* env, Object* exp,
 
   Object* e = exp;
   for (int i = 0; i < length; i++) {
-    data->elements[i] = Cell.car(e);
+    data->raw_elements[i] = Cell.car(e);
     e = Cell.cdr(e);
   }
 
@@ -66,6 +70,7 @@ static int restNum(Object* form)
 
 static Object* next(Object* form)
 {
+  assert(pos(form) < pull(form)->size);
   return pull(form)->raw_elements[pull(form)->pos];
 }
 

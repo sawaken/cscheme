@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 
 CPP_COMPILER = "g++"
-C_COMPILER = "gcc"
+C_COMPILER = "gcc -std=c99"
 GTEST_DIR = "gtest-1.7.0"
 SRC_DIR = "../src"
 LIB = ["libgtest.a", "libgtest_main.a"]
@@ -34,6 +34,14 @@ TESTS = {
 
   "type/test_cell" =>  ["type/test_cell.o",
                         "../src/type/meta_object.o",
+                        "../src/type/cell.o",
+                        "../src/type/dummy.o",
+                        "../src/type/type.o"],
+
+  "type/test_form" =>  ["type/test_form.o",
+                        "../src/list_util.o",
+                        "../src/type/meta_object.o",
+                        "../src/type/form.o",
                         "../src/type/cell.o",
                         "../src/type/dummy.o",
                         "../src/type/type.o"],
@@ -86,7 +94,7 @@ end
 TESTS.each do |key, val|
   desc "run #{key} test"
   file key => [val, LIB].flatten do |t|
-    sh "#{CPP_COMPILER} -pthread -o #{t.name}.out #{t.prerequisites.join(' ')}"
+    sh "#{CPP_COMPILER} -pthread -o #{t.name}.out #{t.prerequisites.join(' ')} -g"
     sh "./#{t.name}.out"
   end
 end
