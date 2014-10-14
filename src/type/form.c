@@ -68,6 +68,11 @@ static int restNum(Object* form)
   return pull(form)->size - pull(form)->pos;
 }
 
+static Object* env(Object* form)
+{
+  return pull(form)->env;
+}
+
 static Object* next(Object* form)
 {
   assert(pos(form) < pull(form)->size);
@@ -84,6 +89,11 @@ static Object* rawElement(Object* form, int position)
 {
   assert(position >= pos(form));
   return pull(form)->raw_elements[position];
+}
+
+static Object** evaluatedElements(Object* form, int start_pos)
+{
+  return pull(form)->evaluated_elements + start_pos;
 }
 
 static Object** rawElements(Object* form, int start_pos)
@@ -108,7 +118,7 @@ static bool isBody(Object* form)
 
 t_Form Form = {
   {release, apply, NULL, NULL},
-  new, pos, restNum, next,
-  evaluatedElement, rawElement, rawElements,
+  new, pos, restNum, env, next,
+  evaluatedElement, rawElement, evaluatedElements, rawElements,
   back, isBody
 };

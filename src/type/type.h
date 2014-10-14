@@ -80,9 +80,11 @@ typedef struct
 		 int length, bool body);
   int (*pos)(Object* form);
   int (*restNum)(Object* form);
+  Object* (*env)(Object* form);
   Object* (*next)(Object* form);
   Object* (*evaluatedElement)(Object* form, int position);
   Object* (*rawElement)(Object* form, int position);
+  Object* (*evaluatedElements)(Object* form, int start_pos);
   Object** (*rawElements)(Object* form, int start_pos);
   void (*back)(Object* form, Object* obj);
   bool (*isBody)(Object* form);
@@ -120,7 +122,9 @@ typedef struct
 {
   Controller con;
   Object* (*New)(Object* meta, Object* param_list, 
-		 Object** exps, int n);
+		 Object** exps, int len);
+  Object* (*makeForm)(Object* meta, Object* env,
+		      Object** args, int argc);
 } t_Lambda;
 extern t_Lambda Lambda;
 

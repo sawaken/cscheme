@@ -40,11 +40,16 @@ void eval(Object* meta, Object* cont)
       }
     }
     else {    // this level's are all evaluated. so apply.
-      Object* command = Form.command(form);
+      Object* command = Form.evaluatedElement(form, 0);
 
       if (IsA(command, &Lambda)) {
 	// arg_len check
-	Continuation.replace(cont, Lambda.makeForm(meta, command, form));
+	Continuation.replace(cont,
+			     Lambda.makeForm(meta, 
+					     command,
+					     Form.env(form),
+					     Form.evaluatedElements(form, 1),
+					     Form.pos(form) - 1);  
       }
       else if (IsA(command, &PrimFunc)) {
 	Object* obj = PrimFunc.apply(command, form);
