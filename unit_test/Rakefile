@@ -67,13 +67,13 @@ task :clean do
 end
 
 file "libgtest.a" do
-  sh "g++ -g -I./#{GTEST_DIR}/include -I./#{GTEST_DIR} -c ./#{GTEST_DIR}/src/gtest-all.cc"
+  sh "#{CPP_COMPILER} -g -I./#{GTEST_DIR}/include -I./#{GTEST_DIR} -c ./#{GTEST_DIR}/src/gtest-all.cc"
   sh "ar -rv libgtest.a gtest-all.o"
   sh "rm gtest-all.o"
 end
 
 file "libgtest_main.a" do
-  sh "g++ -g -I./#{GTEST_DIR}/include -I./#{GTEST_DIR} -c ./#{GTEST_DIR}/src/gtest_main.cc"
+  sh "#{CPP_COMPILER} -g -I./#{GTEST_DIR}/include -I./#{GTEST_DIR} -c ./#{GTEST_DIR}/src/gtest_main.cc"
   sh "ar -rv libgtest_main.a gtest_main.o"
   sh "rm gtest_main.o"
 end
