@@ -92,24 +92,25 @@ extern t_Form Form;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* meta, Object* cont);
-  Object* (*dup)(Object* cont);
+  Object* (*New)(Object* meta, Object* init_cont);
   Object* (*top)(Object* cont);
+  int (*size)(Object* cont);
+  int (*max_size)(Object* cont);
+  Object* (*at)(Object* cont, int pos);
+  void (*erase)(Object* cont, int start_pos, int length);
   void (*pop)(Object* cont);
   void (*push)(Object* cont, Object* obj);
-  void (*call)(Object* cont, Object* alt_cont, Object* obj);
-  void (*ret)(Object* cont);
-  void (*replace)(Object* cont, Object* obj);
-  void (*erase)(Object* cont, int start_pos, int n);
-  int (*size)(Object* cont);
-  Object* (*at)(Object* cont, int pos);
+  void (*trans)(Object* cont, Object* alt_cont, Object* obj);
+  void (*returnTopToForm)(Object* cont);
+  void (*popAndPush)(Object* cont, Object* obj);
 } t_Continuation;
 extern t_Continuation Continuation;
 
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* meta, char* name, void (*action)(Object* cont),
+  Object* (*New)(Object* meta, char* name,
+		 void (*action)(Object* cont),
 		 int len_min, int len_max);
   void (*doAction)(Object* meta, Object* sf, Object* cont);
 } t_SpecialForm;
@@ -122,6 +123,32 @@ typedef struct
 		 Object** exps, int n);
 } t_Lambda;
 extern t_Lambda Lambda;
+
+typedef struct
+{
+  Controller con;
+  Object* (*New)(Object* meta, Object* parent);
+  void (*bind)(Object* env, Object* key, Object* value);
+  Object* (*find)(Object* env, Object* key,
+		  bool (*comp)(Object*, Object*));
+} t_Env;
+extern t_Env Env;
+
+typedef struct
+{
+  Controller con;
+  Object* (*New)(Object* meta, Object* raised_obj);
+  Object* (*take)(Object* exception);
+} t_Exception;
+extern t_Exception Exception;
+
+typedef struct
+{
+  Controller con;
+  Object* (*New)(Object* meta, char* str);
+  char* (*to_s)(Object* string);
+} t_String;
+extern t_String String;
 
 typedef struct
 {

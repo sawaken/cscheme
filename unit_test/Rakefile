@@ -66,35 +66,30 @@ task :clean do
   sh "rm -f ../src/*.o ../src/type/*.o"
 end
 
-file "gtest_build" do
-  puts "--- build gtest ----"
-  sh "mkdir gtest_build"
-  Dir.chdir("gtest_build") do
-    sh "cmake ../#{GTEST_DIR}"
-    sh "make gtest gtest_main"
-  end
+file "libgtest.a" do
+  sh "g++ -g -I./#{GTEST_DIR}/include -I./#{GTEST_DIR} -c ./#{GTEST_DIR}/src/gtest-all.cc"
+  sh "ar -rv libgtest.a gtest-all.o"
+  sh "rm gtest-all.o"
 end
 
-file "libgtest.a" => "gtest_build" do
-  sh "cp ./gtest_build/libgtest.a ./"
-end
-
-file "libgtest_main.a" => "gtest_build" do
-  sh "cp ./gtest_build/libgtest_main.a ./"
+file "libgtest_main.a" do
+  sh "g++ -g -I./#{GTEST_DIR}/include -I./#{GTEST_DIR} -c ./#{GTEST_DIR}/src/gtest_main.cc"
+  sh "ar -rv libgtest_main.a gtest_main.o"
+  sh "rm gtest_main.o"
 end
 
 rule ".o" => ".cc" do |t|
-  sh "#{CPP_COMPILER} -I#{GTEST_DIR}/include -I#{SRC_DIR} -c #{t.source} -o #{t.name} -g"
+  sh "#{CPP_COMPILER} -g -I#{GTEST_DIR}/include -I#{SRC_DIR} -c #{t.source} -o #{t.name}"
 end
 
 rule %r{^\.\.\/src\/((.+)\/)*(.+)\.o} => "%X.c" do |t|
-  sh "#{C_COMPILER} -I#{GTEST_DIR}/include -I#{SRC_DIR} -c #{t.source} -o #{t.name} -g"
+  sh "#{C_COMPILER} -g -I#{GTEST_DIR}/include -I#{SRC_DIR} -c #{t.source} -o #{t.name}"
 end
 
 TESTS.each do |key, val|
   desc "run #{key} test"
   file key => [val, LIB].flatten do |t|
-    sh "#{CPP_COMPILER} -pthread -o #{t.name}.out #{t.prerequisites.join(' ')} -g"
+    sh "#{CPP_COMPILER} -g -pthread -o #{t.name}.out #{t.prerequisites.join(' ')}"
     sh "./#{t.name}.out"
   end
 end
