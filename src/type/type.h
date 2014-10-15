@@ -50,7 +50,7 @@ extern t_MetaObject MetaObject;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* meta, char* name);
+  Object* (*New)(Object* meta, char name[]);
   char* (*to_s)(Object* symbol);
 } t_Symbol;
 extern t_Symbol Symbol;
@@ -84,7 +84,7 @@ typedef struct
   Object* (*next)(Object* form);
   Object* (*evaluatedElement)(Object* form, int position);
   Object* (*rawElement)(Object* form, int position);
-  Object* (*evaluatedElements)(Object* form, int start_pos);
+  Object** (*evaluatedElements)(Object* form, int start_pos);
   Object** (*rawElements)(Object* form, int start_pos);
   void (*back)(Object* form, Object* obj);
   bool (*isBody)(Object* form);
@@ -149,7 +149,7 @@ extern t_Exception Exception;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* meta, char* str);
+  Object* (*New)(Object* meta, char str[]);
   char* (*to_s)(Object* string);
 } t_String;
 extern t_String String;

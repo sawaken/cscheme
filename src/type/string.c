@@ -17,7 +17,7 @@ static bool release(Object* obj)
   return true;
 }
 
-static Object* new(Object* meta, char* string)
+static Object* new(Object* meta, char string[])
 {
   Data* data = malloc(sizeof(Data));
   data->length = strlen(string);
