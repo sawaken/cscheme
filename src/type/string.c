@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "type.h"
 
-const void* Type = &String;
+static void* Type = &String;
 
 typedef struct
 {

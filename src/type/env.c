@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "type.h"
 
-const void* Type = &Env;
+static void* Type = &Env;
 
 typedef struct
 {

@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
-const void* Type = &Lambda;
+static void* Type = &Lambda;
 
 typedef struct
 {

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "type.h"
 
-const void* Type = &Exception;
+static void* Type = &Exception;
 
 typedef struct
 {
