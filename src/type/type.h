@@ -123,8 +123,6 @@ typedef struct
   Controller con;
   Object* (*New)(Object* meta, Object* param_list, 
 		 Object** exps, int len);
-  Object* (*makeForm)(Object* meta, Object* env,
-		      Object** args, int argc);
 } t_Lambda;
 extern t_Lambda Lambda;
 
@@ -153,6 +151,14 @@ typedef struct
   char* (*to_s)(Object* string);
 } t_String;
 extern t_String String;
+
+typedef struct
+{
+  Controller con;
+  Object* (*New)(Object* meta, Object** params,
+		 int paramc, Object* rest);
+} t_Parameter;
+extern t_Parameter Parameter;
 
 typedef struct
 {
