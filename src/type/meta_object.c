@@ -31,13 +31,14 @@ static GCInfo* gc_info(Object* obj)
 
 static void add(Object* meta, Object* obj)
 {
-  if (pull(meta)->size == pull(meta)->max_size) {
-    // raise exception
-    exit(1);
-  }
 
   if (pull(meta)->pos == pull(meta)->max_size) {
-    // resort
+    int k = 0;
+    for (int i = 0; i < pull(meta)->pos; i++) {
+      if (pull(meta)->objects[i] == NULL) continue;
+      pull(meta)->objects[k++] = pull(meta)->objects[i];
+    }
+    pull(meta)->pos = pull(meta)->size = k;
   }
 
   int pos = pull(meta)->pos++;
@@ -72,9 +73,18 @@ static Object* new(int init_max_size)
 
 static Object* gen(Object* meta, void* type, void* data)
 {
-  Object* object = malloc(sizeof(Object));
-  object->type     = type;
-  object->data     = data;
+  Object* object;
+
+  if (pull(meta)->size == pull(meta)->max_size) {
+    return NULL;
+  }
+
+  if ((object = malloc(sizeof(Object))) == NULL) {
+    return NULL;
+  }
+
+  object->type = type;
+  object->data = data;
   add(meta, object);
 
   if (Con(object)->apply != NULL) {
