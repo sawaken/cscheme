@@ -32,6 +32,11 @@ TESTS = {
                          "../src/type/symbol.o",
                          "../src/type/type.o"],
 
+  "type/test_string" => ["type/test_string.o",
+                         "../src/type/meta_object.o",
+                         "../src/type/string.o",
+                         "../src/type/type.o"],
+
   "type/test_exception" => ["type/test_exception.o",
                             "../src/type/meta_object.o",
                             "../src/type/exception.o",

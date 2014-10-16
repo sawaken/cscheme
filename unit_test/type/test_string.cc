@@ -5,6 +5,6 @@
 TEST(to_s, case1)
 {
   Object* meta = MetaObject.New(10);
-  Object* symbol = Symbol.New(meta, "hoge");
-  ASSERT_STREQ("hoge", Symbol.to_s(symbol));
+  Object* str = String.New(meta, "hoge");
+  ASSERT_STREQ("hoge", String.to_s(str));
 }
