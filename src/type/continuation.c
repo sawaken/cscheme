@@ -18,13 +18,13 @@ typedef struct
 
 static bool release(Object* obj)
 {
-  free(stack);
+  free(pull(obj)->stack);
   return true;
 }
 
 static void apply(Object* obj, void (*proc)(Object*))
 {
-  for (int i = 0; i < size; i++)
+  for (int i = 0; i < size(obj); i++)
     proc(at(obj, i));
 }
 
@@ -64,7 +64,7 @@ static int max_size(Object* cont)
 
 static Object* at(Object* cont, int pos)
 {
-  assert(pos < size);
+  assert(pos < size(cont));
   return pull(cont)->stack[pos];
 }
 
@@ -92,12 +92,12 @@ static void push(Object* cont, Object* obj)
   MetaObject.referred(pull(cont)->stack[pull(cont)->size++] = obj);
 }
 
-static void trans(Object* cont, Object* alt_cont, Object obj)
+static void trans(Object* cont, Object* alt_cont, Object* obj)
 {
   int s = size(cont);
   for (int i = 0; i < size(alt_cont); i++)
     push(cont, at(alt_cont, i));
-  push(obj);
+  push(cont, obj);
   erase(cont, 0, s);
 }
 

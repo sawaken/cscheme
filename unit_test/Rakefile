@@ -46,6 +46,13 @@ TESTS = {
                         "../src/type/dummy.o",
                         "../src/type/type.o"],
 
+  "type/test_continuation" =>  ["type/test_continuation.o",
+                                "../src/type/meta_object.o",
+                                "../src/type/continuation.o",
+                                "../src/type/form.o",
+                                "../src/type/cell.o",
+                                "../src/type/dummy.o",
+                                "../src/type/type.o"],
 }
 
 

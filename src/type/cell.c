@@ -29,7 +29,7 @@ static Object* cdr(Object* obj)
   return pull(obj)->cdr;
 }
 
-static void apply(Object* obj, int (*proc)(Object*))
+static void apply(Object* obj, void (*proc)(Object*))
 {
   if (!empty(obj)) {
     proc(car(obj));
