@@ -7,47 +7,41 @@ static void* Type = &SpecialForm;
 
 typedef struct
 {
-  char name[10];
+  char* name;
   void (*action)(Object* cont);
+  int len_min, len_max;
 } Data;
-
-
-static Data* pull(Object* obj)
-{
-  assert(obj->type == Type);
-  return (Data*)(obj->data);
-}
-
 
 static void release(Object* obj)
 {
-
+  free(pull(obj)->name);
 }
 
-static void referred(Object* obj)
-{
-
-}
-
-static void unreferred(Object* obj)
-{
-
-}
-
-static Object* new(char* name, void (*action)(Object* cont))
+static Object* new(Object* meta, char name[],
+		   void (*action)(Object* cont)
+		   int len_min, int len_max)
 {
   Data* data = malloc(sizeof(Data));
+  data->name = malloc((strlen(name) + 1) * sizeof(char));
   strcpy(data->name, name);
   data->action = action;
+  data->len_min = len_min;
+  data->len_max = len_max;
   return New(Type, data);
 }
 
-static Object* doAction(Object* sf, Object* cont)
+static bool validArgc(Object* sf, int argc)
 {
-  pull(sf)->action(cont);
+  return pull(sf)->len_min <= argc && argc <= pull(sf)->len_max;
+}
+
+static Object* doAction(Object* sf, Object* meta,
+			Object* cont)
+{
+  pull(sf)->action(meta, cont);
 }
 
 t_SpecialForm SpecialForm = {
   {release, referred, unreferred},
-  new, doAction
+  new, validArgc, doAction
 };

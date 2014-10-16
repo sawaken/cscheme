@@ -36,7 +36,9 @@ static void add(Object* meta, Object* obj)
     int k = 0;
     for (int i = 0; i < pull(meta)->pos; i++) {
       if (pull(meta)->objects[i] == NULL) continue;
-      pull(meta)->objects[k++] = pull(meta)->objects[i];
+      pull(meta)->objects[k] = pull(meta)->objects[i];
+      pull(meta)->gc_infos[k] = pull(meta)->gc_infos[i];
+      k++;
     }
     pull(meta)->pos = pull(meta)->size = k;
   }

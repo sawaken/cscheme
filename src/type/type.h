@@ -114,7 +114,8 @@ typedef struct
   Object* (*New)(Object* meta, char* name,
 		 void (*action)(Object* cont),
 		 int len_min, int len_max);
-  void (*doAction)(Object* meta, Object* sf, Object* cont);
+  bool (*validArgc)(Object* sf, int argc);
+  void (*doAction)(Object* sf, Object* meta, Object* cont);
 } t_SpecialForm;
 extern t_SpecialForm SpecialForm;
 
