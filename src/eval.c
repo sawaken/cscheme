@@ -1,4 +1,5 @@
 #include "type/type.h"
+#include "eval_util.h"
 
 Object* eval(Object* meta, Object* cont)
 {
