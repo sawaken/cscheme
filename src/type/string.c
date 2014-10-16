@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include "type.h"
 
@@ -17,7 +18,7 @@ static bool release(Object* obj)
   return true;
 }
 
-static Object* new(Object* meta, char string[])
+static Object* new(Object* meta, const char string[])
 {
   Data* data = malloc(sizeof(Data));
   data->length = strlen(string);

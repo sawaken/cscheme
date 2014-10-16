@@ -32,6 +32,6 @@ TEST(empty_cell, case1)
   Object* ecell = Cell.New(meta, NULL, NULL);
   Object* cell  = Cell.New(meta, ecell, ecell);
 
-  ASSERT_EQ(true, Cell.empty(ecell));
-  ASSERT_EQ(false, Cell.empty(cell));
+  ASSERT_TRUE(Cell.empty(ecell));
+  ASSERT_FALSE(Cell.empty(cell));
 }

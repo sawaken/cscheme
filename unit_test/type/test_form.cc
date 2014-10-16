@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <type/type.h>
-#include <list_util.h>
+#include <util.h>
 #include <iostream>
 
 class UseTest : public ::testing::Test {
@@ -20,7 +20,7 @@ protected:
     y = Dummy.New(meta, NULL);
     z = Dummy.New(meta, NULL);
     env = Dummy.New(meta, NULL);
-    exp  = LS.New(&g, 3, a, b, c);
+    exp  = Util.list(&g, 3, a, b, c);
     form = Form.New(meta, env, exp, 3, true);
   }
 };

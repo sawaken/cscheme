@@ -16,7 +16,7 @@ static bool release(Object* obj)
   return true;
 }
 
-static Object* new(Object* meta, char name[])
+static Object* new(Object* meta, const char name[])
 {
   Data* data = malloc(sizeof(Data));
   data->name = malloc((strlen(name) + 1) * sizeof(char));

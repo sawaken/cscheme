@@ -45,6 +45,7 @@ Object* eval(Object* meta, Object* cont)
     
     if (IsA(command, &PrimFunc)) {
       Continuation.replace(cont, PrimFunc.apply(command,
+						meta,
 						Form.evaluatedElements(top, 1),
 						Form.pos(top) - 1));
       continue;

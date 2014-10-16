@@ -23,7 +23,7 @@ typedef struct
 {
   Object* meta_obj;
   Object* (*cons)(Object*, Object*, Object*);
-  Object* (*symbol)(Object*, char*);
+  Object* (*symbol)(Object*, const char[]);
   Object* (*exception)(Object*, char*);
 } Generator;
 
@@ -50,7 +50,7 @@ extern t_MetaObject MetaObject;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* meta, char name[]);
+  Object* (*New)(Object* meta, const char name[]);
   char* (*to_s)(Object* symbol);
 } t_Symbol;
 extern t_Symbol Symbol;
@@ -111,7 +111,7 @@ extern t_Continuation Continuation;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* meta, char* name,
+  Object* (*New)(Object* meta, const char* name,
 		 void (*action)(Object* cont),
 		 int len_min, int len_max);
   bool (*validArgc)(Object* sf, int argc);
@@ -148,7 +148,7 @@ extern t_Exception Exception;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* meta, char str[]);
+  Object* (*New)(Object* meta, const char str[]);
   char* (*to_s)(Object* string);
 } t_String;
 extern t_String String;
@@ -160,6 +160,16 @@ typedef struct
 		 int paramc, Object* rest);
 } t_Parameter;
 extern t_Parameter Parameter;
+
+typedef struct
+{
+  Controller con;
+  Object* (*New)(Object* meta, const char name[],
+		 Object* (*func)(Object**, int));
+  Object* (*apply)(Object* pf, Object* meta,
+		   Object** args, int argc);
+} t_PrimFunc;
+extern t_PrimFunc PrimFunc;
 
 typedef struct
 {

@@ -17,7 +17,7 @@ static void release(Object* obj)
   free(pull(obj)->name);
 }
 
-static Object* new(Object* meta, char name[],
+static Object* new(Object* meta, const char name[],
 		   void (*action)(Object* cont)
 		   int len_min, int len_max)
 {

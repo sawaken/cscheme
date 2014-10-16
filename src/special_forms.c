@@ -41,13 +41,12 @@ static void lambda(Object* meta, Object* cont)
 }
 
 
-SFList SFListGen(Generator* g, Object* env)
+void BindSF(Generator* g, Object* env)
 {
   Env.bind(env, g->symbol(g->meta_obj, "if"), 
 	   SpecialForm.new(meta, "if", _if, 2, 3));
   Env.bind(env, g->symbol(g->meta_obj, "call/cc"),
 	   SpecialForm.new(meta, "call/cc", call_cc, 1, 1));
   Env.bind(env, g->symbol(g->meta_obj, "lambda"),
-	   SpecialForm.new(meta, "lambda", lambda, 2, LEN_INF);
-  return ls;
+	   SpecialForm.new(meta, "lambda", lambda, 2, LEN_INF));
 }

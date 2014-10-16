@@ -1,15 +1,15 @@
 #include <stdarg.h>
 #include "type/type.h"
 
-#ifndef LIST_UTIL_H
-#define LIST_UTIL_H
+#ifndef UTIL_H
+#define UTIL_H
 
 
 typedef struct
 {
-  Object* (*New)(Generator* g, int length, ...);
+  Object* (*list)(Generator* g, int length, ...);
   Object* (*symList)(Generator* g, int length, ...);
-} ListUtil;
-extern ListUtil LS;
+} t_Util;
+extern t_Util Util;
 
 #endif
