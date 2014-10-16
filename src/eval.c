@@ -1,72 +1,59 @@
 #include "type/type.h"
 
-void eval(Object* meta, Object* cont)
+Object* eval(Object* meta, Object* cont)
 {
   while (true) {
-    Object* form = Continuation.top(cont);
+    Object *command, *top = Continuation.top(cont);
 
-    if (!IsA(Continuation.top(cont), &Form)) {
-      if (Continuation.size(cont) == 1) return Continuation.top(cont);
-      Continuation.ret(cont);
+    if (!IsA(top, &Form) && Continuation.size(cont) == 1) {
+      return Continuation.top(cont);
+    }
+
+    if (IsA(top, &Exception)) {
+      
+    }
+
+    if (!IsA(top, &Form)) {
+      Continuation.returnTopToForm(cont);
       continue;
     }
 
-    if (Form.isBody(form) && Form.restNum(form) == 1) {
-      Object* tail = Form.next(form);
-      if (IsA(tail, &Cell)) {
-	Continuation.replace(cont, Form.new(meta, tail));
-      } else {
-	Continuation.replace(cont, tail);
-      }
+    if (Form.isBody(top) && Form.restNum(top) == 1) {
+      TailCallOptimize(meta, cont, Form.next(top));
       continue;
     }
     
-    if (Form.commandEvaluated(form) && IsA(Form.command(form), &SpecialForm)) {
-      SpecialForm.doAction(meta, Form.command(form), cont);
+    if (Form.pos(top) > 0 && IsA(Form.evaluatedElement(top, 0), &SpecialForm)) {
+      SpecialForm.doAction(Form.evaluatedElement(top, 0), meta, cont);
       continue;
     }
 
-    if (Form.hasUnevaluated(form)) {
-      Object* next = Form.next(form);
-
-      if (IsA(next, &Cell)) {
-	Continuation.push(cont, Form.new(meta, Form.env(form), next));
-      }
-      else if (IsA(next, &Symbol)) {
-	Form.back(form, Env.resolve(Form.env(form), next));
-      }
-      else {
-	Form.back(form, next);
-      }
-    }
-    else {    // this level's are all evaluated. so apply.
-      Object* command = Form.evaluatedElement(form, 0);
-
-      if (IsA(command, &Lambda)) {
-	// arg_len check
-	Continuation.replace(cont,
-			     Lambda.makeForm(meta, 
-					     command,
-					     Form.env(form),
-					     Form.evaluatedElements(form, 1),
-					     Form.pos(form) - 1);  
-      }
-      else if (IsA(command, &PrimFunc)) {
-	Object* obj = PrimFunc.apply(command, form);
-	if (IsA(obj, &Exception)) {
-	  Continuation.replace(cont, obj);
-	  continue;
-	}
-	Continuation.replace(cont, obj);
-      }
-      else if (IsA(command, &Continuation)) {
-	// arg_len check
-	Continuation.call(cont, command, Form.evaluatedArg(form, 1));
-      }
-      else {
-	assert(false);
-      }
+    if (Form.rest(top) > 0) {
+      NextStackFrame(meta, cont, Form.next(top));
+      continue;
     }
 
+    command = Form.evaluatedElement(top, 0);
+
+    if (IsA(command, &Lambda)) {
+      ApplyLambda(meta, cont, command,
+		  Form.evaluatedElements(top, 1),
+		  Form.pos(top) - 1);
+      continue;
+    }
+    
+    if (IsA(command, &PrimFunc)) {
+      Continuation.replace(cont, PrimFunc.apply(command,
+						Form.evaluatedElements(top, 1),
+						Form.pos(top) - 1));
+      continue;
+    }
+
+    if (IsA(command, &Continuation)) {
+      ApplyContinuation(meta, cont, top);
+      continue;
+    }
+
+    Continuation.push(cont, Exception.new(meta, String.new(meta, "apply error.")));
   }
 }
