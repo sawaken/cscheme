@@ -1,13 +1,98 @@
 #include "type/type.h"
-#include "eval_util.h"
+#include "eval.h"
 
-Object* eval(Object* meta, Object* cont)
+void TailCallOptimize(Object* meta, Object* cont, Object* tail)
+{
+  Object* top = continouation.top(cont);
+
+  if (IsA(tail, &Cell)) {
+    Continuation.replace(cont, Form.new(meta, Form.env(top), tail, LS.length(tail)));
+  } else {
+    Continuation.replace(cont, tail);
+  }
+}
+
+void NextStackFrame(Object* meta, Object* cont, Object* next)
+{
+  Object* top = continouation.top(cont);
+
+  if (IsA(next, &Cell)) {
+    Continuation.push(cont, Form.new(meta, Form.env(top), next, LS.length(next)));
+  }
+  else if (IsA(next, &Symbol)) {
+    Object* solved = Env.find(Form.env(top), next);
+    if (solved != NULL) {
+      Continuation.push(cont, solved);
+    } else {
+      Continuation.push(cont, Exception.new(meta, String.new(meta, "unsolvable.")));
+    }
+  }
+  else {
+    Continuation.push(cont, next);
+  }
+}
+
+void ApplyContinuation(Object* meta, Object* cont, Object* top)
+{
+  if (Form.pos(top) != 2) {
+    Continuation.push(cont, Exception.new(meta, String.new(meta, "arg error.")));
+  } else {
+    Continuation.trans(cont,
+		       Form.evaluatedElement(top, 0),
+		       Form.evaluatedElement(top, 1));
+  }
+}
+
+Object* MakeForm(Object* meta, Object* lambda, Object** args, int argc)
+{
+
+
+}
+
+void ApplyLambda(Object* meta, Object* cont, Object* lambda,
+		 Object** args, int argc)
+{
+  if (Parameter.validArgc(Lambda.parameter(lambda), argc)) {
+    Continuation.replace(cont, MakeForm(meta, lambda, args, argc));
+  } else {
+    Continuation.push(cont, Exception.new(meta, String.new(meta, "lambda arg error.")));
+  }
+}
+
+void Apply(Object* meta, Object* cont, Object* form)
+{
+  Object* command = Form.evaluatedElement(form, 0);
+
+  if (IsA(command, &Lambda)) {
+    ApplyLambda(meta, cont, command,
+		Form.evaluatedElements(form, 1),
+		Form.pos(form) - 1);
+    return;
+  }
+    
+  if (IsA(command, &PrimFunc)) {
+    Continuation.replace(cont, PrimFunc.apply(command,
+					      meta,
+					      Form.evaluatedElements(form, 1),
+					      Form.pos(form) - 1));
+    return;
+  }
+
+  if (IsA(command, &Continuation)) {
+    ApplyContinuation(meta, cont, form);
+    return;
+  }
+
+  Continuation.push(cont, Exception.new(meta, String.new(meta, "apply error.")));
+}
+
+Object* Eval(Object* meta, Object* cont)
 {
   while (true) {
-    Object *command, *top = Continuation.top(cont);
+    Objec* top = Continuation.top(cont);
 
     if (!IsA(top, &Form) && Continuation.size(cont) == 1) {
-      return Continuation.top(cont);
+      return top;
     }
 
     if (IsA(top, &Exception)) {
@@ -25,8 +110,9 @@ Object* eval(Object* meta, Object* cont)
     }
     
     if (Form.pos(top) > 0 && IsA(Form.evaluatedElement(top, 0), &SpecialForm)) {
-      SpecialForm.doAction(Form.evaluatedElement(top, 0), meta, cont);
-      continue;
+      if (SpecialForm.doAction(Form.evaluatedElement(top, 0), meta, cont)) {
+	continue;
+      }
     }
 
     if (Form.rest(top) > 0) {
@@ -34,28 +120,6 @@ Object* eval(Object* meta, Object* cont)
       continue;
     }
 
-    command = Form.evaluatedElement(top, 0);
-
-    if (IsA(command, &Lambda)) {
-      ApplyLambda(meta, cont, command,
-		  Form.evaluatedElements(top, 1),
-		  Form.pos(top) - 1);
-      continue;
-    }
-    
-    if (IsA(command, &PrimFunc)) {
-      Continuation.replace(cont, PrimFunc.apply(command,
-						meta,
-						Form.evaluatedElements(top, 1),
-						Form.pos(top) - 1));
-      continue;
-    }
-
-    if (IsA(command, &Continuation)) {
-      ApplyContinuation(meta, cont, top);
-      continue;
-    }
-
-    Continuation.push(cont, Exception.new(meta, String.new(meta, "apply error.")));
+    Apply(meta, cont, top);
   }
 }

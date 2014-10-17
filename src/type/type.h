@@ -112,10 +112,10 @@ typedef struct
 {
   Controller con;
   Object* (*New)(Object* meta, const char* name,
-		 void (*action)(Object* cont),
+		 bool (*action)(Object* cont),
 		 int len_min, int len_max);
   bool (*validArgc)(Object* sf, int argc);
-  void (*doAction)(Object* sf, Object* meta, Object* cont);
+  bool (*doAction)(Object* sf, Object* meta, Object* cont);
 } t_SpecialForm;
 extern t_SpecialForm SpecialForm;
 

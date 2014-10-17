@@ -1,36 +1,42 @@
 #include "type/type.h"
 
-static void _if(Object* meta, Object* cont)
+static bool _if(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
-  if (Form.pos(form) == 2) {
-    Object* p = Form.evaluatedArg(form, 1);
-    Object* a = Form.rawArg(form, 2);
-    Object* b = Form.rawArg(form, 3);
-    Object* exp = Bool.which(p, a, b);
 
-    if (IsA(exp, &Cell)) {
-      Continuation.replace(cont, Form.new(meta, exp));
+  if (Form.pos(form) != 2)
+    return false;
+
+    Object* p = Form.evaluatedElement(form, 1);
+    Object* a = Form.rawElement(form, 2);
+    Object* b = Form.rawElement(form, 3);
+    Object* selected = Bool.which(p, a, b);
+
+    if (IsA(selected, &Cell)) {
+      Continuation.replace(cont, Form.new(meta, selected));
     } else {
-      Continuation.replace(cont, exp);
+      Continuation.replace(cont, selected);
     }
   }
 }
 
 // Arg1 should be [Lambda]
-static void call_cc(Object* meta, Object* cont)
+static bool call_cc(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
-  if (Form.pos(form) == 2) {
-    Object* lambda = Form.evaluatedArg(form, 1); //type check
-    Object* cc = Continuation.dup(cont);
-    Continuation.pop(cc);
-    Continuation.replace(cont, Lambda.makeForm(meta, lambda, &cc, 1));
-  }
+
+  if (Form.pos(form) != 2)
+    return false;
+
+  Object* lambda = Form.evaluatedArg(form, 1); //type check
+  Object* cc = Continuation.dup(cont);
+  Continuation.pop(cc);
+  Continuation.replace(cont, Lambda.makeForm(meta, lambda, &cc, 1));
+  return true;
 }
 
 // Arg1 should be [Symbol]
-static void lambda(Object* meta, Object* cont)
+static bool lambda(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
   Object* lambda = Lambda.new(meta,

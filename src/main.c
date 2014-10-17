@@ -1,35 +1,29 @@
 #include <stdio.h>
 
 #include "type/type.h"
+#include "pcheme.h"
 #include "parse.h"
 #include "eval.h"
 #include "special_forms.h"
-#include "primitive_functions.h"
+#include "prim_funcs.h"
+
+#define REPL_MODE 1
 
 int main()
 {
-  Object* meta = MetaObject.new(100);
-  Generator g = {meta, Cell.new, Symbol.new, Exception.new};
-  SFList sf_list = SFListGen(meta);
-  Object* top_env = Env.new(meta, NULL);
-
-  InitSpecialForms(meta);
-  TopEnvAssign(meta, top_env, sf_list);
+  Interpreter* inter = Interpreter.new();
 
   if (REPL_MODE) {
+    
+    char buf[1000];
 
-    char* buf = malloc(1000 * sizeof(char));
-
-    while (fgets(buf, 1000, stdin) != NULL) {
-      Object* exp = ParseExp(buf, &g);
-      Object* cont = Continuation.new(meta, Form.new(meta, top_env, exp));
-      Eval(meta, cont);
-      Object* str = String.newFromObject(meta, Continuation.top(cont));
-      printf("%s\n" String.to_s(str));
+    while (fgets(buf, 1000, stdion) != NULL) {
+      Pcheme.eval(inter, buf);
+      printf("%s\n", ToStr(Pcheme.getEvaluated(inter)));
     }
-
-    free(buf);
   }
+
+  Pcheme.release(inter);
 
   return 0;
 }
