@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "type.h"
 
 static void* Type = &PrimFunc;
@@ -19,7 +20,7 @@ static bool release(Object* pf)
 static Object* new(Object* meta, const char name[],
 		   Object* (*func)(Object*, Object**, int))
 {
-  Data data = malloc(sizeof(Data));
+  Data* data = malloc(sizeof(Data));
   data->name = malloc((strlen(name) + 1) * sizeof(char));
   strcpy(data->name, name);
   data->func = func;

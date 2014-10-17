@@ -112,7 +112,7 @@ typedef struct
 {
   Controller con;
   Object* (*New)(Object* meta, const char* name,
-		 bool (*action)(Object* cont),
+		 bool (*action)(Object* meta, Object* cont),
 		 int len_min, int len_max);
   bool (*validArgc)(Object* sf, int argc);
   bool (*doAction)(Object* sf, Object* meta, Object* cont);
@@ -122,8 +122,9 @@ extern t_SpecialForm SpecialForm;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* meta, Object* param,
+  Object* (*New)(Object* meta, Object* env, Object* param,
 		 Object* const exps[], int length);
+  Object* (*env)(Object* lambda);
   Object* (*param)(Object* lambda);
   Object** (*exps)(Object* lambda);
   int (*expc)(Object* lambda);
@@ -174,7 +175,7 @@ typedef struct
 {
   Controller con;
   Object* (*New)(Object* meta, const char name[],
-		 Object* (*func)(Object**, int));
+		 Object* (*func)(Object*, Object**, int));
   Object* (*apply)(Object* pf, Object* meta,
 		   Object** args, int argc);
 } t_PrimFunc;
@@ -192,7 +193,15 @@ typedef struct
 extern t_Dummy Dummy;
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 bool IsA(Object* obj, void* type);
 Controller* Con(Object* obj);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

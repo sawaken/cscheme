@@ -14,6 +14,7 @@ typedef struct
   Object* (*form)(Object* meta, Object* env, bool body, int length, ...);
   Object* (*arrayToList)(Object* meta, Object** objects, int length);
   void (*assign)(Object* meta, Object* param, Object* env, Object** args, int argc);
+  bool (*EQ)(Object* a, Object* b);
 } t_Util;
 extern t_Util Util;
 

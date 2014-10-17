@@ -1,25 +1,24 @@
+#include <stdlib.h>
 #include "type/type.h"
 #include "util.h"
 #include "eval.h"
 
-void TailCallOptimize(Object* meta, Object* cont, Object* tail)
+void TailCallOptimize(Object* meta, Object* cont, Object* env, Object* tail)
 {
-  Object* top = continouation.top(cont);
-
   if (IsA(tail, &Cell)) {
-    Continuation.replace(cont, Form.new(meta, Form.env(top), tail, Util.length(tail)));
+    Continuation.popAndPush(cont, Form.new(meta, env, tail, Util.length(tail), false));
   } else {
-    Continuation.replace(cont, tail);
+    Continuation.popAndPush(cont, tail);
   }
 }
 
 void StackNextFrame(Object* meta, Object* cont, Object* env, Object* next)
 {
   if (IsA(next, &Cell)) {
-    Continuation.push(cont, Form.new(meta, env, next, Util.length(next)));
+    Continuation.push(cont, Form.new(meta, env, next, Util.length(next), false));
   }
   else if (IsA(next, &Symbol)) {
-    Object* solved = Env.find(env, next);
+    Object* solved = Env.find(env, next, Util.EQ);
     if (solved != NULL) {
       Continuation.push(cont, solved);
     } else {
@@ -48,7 +47,7 @@ Object* MakeForm(Object* meta, Object* lambda, Object** args, int argc)
   Object* env = Env.new(meta, Lambda.env(lambda));
   Object* form = Form.new(meta, env, exp, Lambda.expc(lambda), true);
   
-  Util.assign(meta, Lambda.parameter(lambda), env, args, argc);
+  Util.assign(meta, Lambda.param(lambda), env, args, argc);
   MetaObject.release(exp);
 
   return form;
@@ -58,8 +57,8 @@ Object* MakeForm(Object* meta, Object* lambda, Object** args, int argc)
 void ApplyLambda(Object* meta, Object* cont, Object* lambda,
 		 Object** args, int argc)
 {
-  if (Parameter.validArgLength(Lambda.parameter(lambda), argc)) {
-    Continuation.replace(cont, MakeForm(meta, lambda, args, argc));
+  if (Parameter.validArgLength(Lambda.param(lambda), argc)) {
+    Continuation.popAndPush(cont, MakeForm(meta, lambda, args, argc));
   } else {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "lambda arg error.")));
   }
@@ -77,7 +76,7 @@ void Apply(Object* meta, Object* cont, Object* form)
   }
     
   if (IsA(command, &PrimFunc)) {
-    Continuation.replace(cont, PrimFunc.apply(command,
+    Continuation.popAndPush(cont, PrimFunc.apply(command,
 					      meta,
 					      Form.evaluatedElements(form, 1),
 					      Form.pos(form) - 1));
@@ -105,7 +104,7 @@ bool StackOperation(Object* meta, Object* cont, Object* top)
   }
 
   if (Form.isBody(top) && Form.restNum(top) == 1) {
-    TailCallOptimize(meta, cont, Form.next(top));
+    TailCallOptimize(meta, cont, Form.env(top), Form.next(top));
     return true;
   }
     
@@ -126,7 +125,7 @@ void Raise(Object* meta, Object* cont)
 Object* Eval(Object* meta, Object* cont)
 {
   while (true) {
-    Objec* top = Continuation.top(cont);
+    Object* top = Continuation.top(cont);
 
     if (!IsA(top, &Form) && Continuation.size(cont) == 1) {
       return top;
@@ -135,7 +134,7 @@ Object* Eval(Object* meta, Object* cont)
     if (StackOperation(meta, cont, top))
       continue;
 
-    if (Form.rest(top) > 0) {
+    if (Form.restNum(top) > 0) {
       StackNextFrame(meta, cont, Form.env(top), Form.next(top));
     } else {
       Apply(meta, cont, top);

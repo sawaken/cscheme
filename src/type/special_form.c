@@ -8,17 +8,18 @@ static void* Type = &SpecialForm;
 typedef struct
 {
   char* name;
-  bool (*action)(Object* cont);
+  bool (*action)(Object* meta, Object* cont);
   int len_min, len_max;
 } Data;
 
-static void release(Object* obj)
+static bool release(Object* obj)
 {
   free(pull(obj)->name);
+  return true;
 }
 
 static Object* new(Object* meta, const char name[],
-		   bool (*action)(Object* cont)
+		   bool (*action)(Object* meta, Object* cont),
 		   int len_min, int len_max)
 {
   Data* data = malloc(sizeof(Data));
@@ -27,7 +28,7 @@ static Object* new(Object* meta, const char name[],
   data->action = action;
   data->len_min = len_min;
   data->len_max = len_max;
-  return New(Type, data);
+  return MetaObject.gen(meta, Type, data);
 }
 
 static bool validArgc(Object* sf, int argc)
@@ -41,6 +42,6 @@ static bool doAction(Object* sf, Object* meta, Object* cont)
 }
 
 t_SpecialForm SpecialForm = {
-  {release, referred, unreferred},
+  {release, NULL, NULL, NULL},
   new, validArgc, doAction
 };

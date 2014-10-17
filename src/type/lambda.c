@@ -7,6 +7,7 @@ static void* Type = &Lambda;
 
 typedef struct
 {
+  Object* env;
   Object* param;
   Object** exps;
   int expc;
@@ -25,10 +26,11 @@ static void apply(Object* lambda, void (*proc)(Object*))
     proc(pull(lambda)->exps[i]);
 }
 
-static Object* new(Object* meta, Object* param, 
+static Object* new(Object* meta, Object* env, Object* param, 
 		   Object* const exps[], int length)
 {
   Data* data = malloc(sizeof(Data));
+  data->env   = env;
   data->param = param;
   data->expc  = length;
   data->exps  = malloc(length * sizeof(Object*));
@@ -38,6 +40,11 @@ static Object* new(Object* meta, Object* param,
   }
 
   return MetaObject.gen(meta, Type, data);
+}
+
+static Object* env(Object* lambda)
+{
+  return pull(lambda)->env;
 }
 
 static Object* param(Object* lambda)
@@ -57,5 +64,5 @@ static int expc(Object* lambda)
 
 t_Lambda Lambda = {
   {release, apply, NULL, NULL},
-  new, param, exps, expc
+  new, env, param, exps, expc
 };

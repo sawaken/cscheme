@@ -92,6 +92,11 @@ static void assign(Object* meta, Object* param, Object* env, Object** args, int 
   }
 }
 
+static bool EQ(Object* a, Object* b)
+{
+  return a == b;
+}
+
 t_Util Util = {
-  list, symList, length, isList, form, arrayToList, assign
+  list, symList, length, isList, form, arrayToList, assign, EQ
 };
