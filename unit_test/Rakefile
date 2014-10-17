@@ -75,6 +75,12 @@ TESTS = {
                          "../src/type/lambda.o",
                          "../src/type/dummy.o",
                          "../src/type/type.o"],
+
+  "type/test_env" => ["type/test_env.o",
+                      "../src/type/meta_object.o",
+                      "../src/type/env.o",
+                      "../src/type/dummy.o",
+                      "../src/type/type.o"],
 }
 
 task :all => ["clean", *TESTS.keys]
