@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
+#include "type.h"
 
 static void* Type = &Lambda;
 
@@ -25,7 +26,7 @@ static void apply(Object* lambda, void (*proc)(Object*))
 }
 
 static Object* new(Object* meta, Object* param, 
-		   const Object* exps[], int length)
+		   Object* const exps[], int length)
 {
   Data* data = malloc(sizeof(Data));
   data->param = param;
@@ -33,7 +34,7 @@ static Object* new(Object* meta, Object* param,
   data->exps  = malloc(length * sizeof(Object*));
 
   for (int i = 0; i < length; i++) {
-    data->exps[i] = exps[i]
+    data->exps[i] = exps[i];
   }
 
   return MetaObject.gen(meta, Type, data);
@@ -41,17 +42,17 @@ static Object* new(Object* meta, Object* param,
 
 static Object* param(Object* lambda)
 {
-  pull(lambda)->param;
+  return pull(lambda)->param;
 }
 
 static Object** exps(Object* lambda)
 {
-  pull(lambda)->exps;
+  return pull(lambda)->exps;
 }
 
 static int expc(Object* lambda)
 {
-  pull(lambda)->expc;
+  return pull(lambda)->expc;
 }
 
 t_Lambda Lambda = {

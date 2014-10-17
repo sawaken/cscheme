@@ -138,10 +138,11 @@ static void release(Object* obj)
     free(obj->data);
     free(obj);
   }
-
-  free(pull(obj->meta_obj)->gc_infos[obj->meta_obj_pos]);
+  
   pull(obj->meta_obj)->objects[obj->meta_obj_pos] = NULL;
   pull(obj->meta_obj)->size--;
+
+  free(pull(obj->meta_obj)->gc_infos[obj->meta_obj_pos]);
 }
 
 static int sweep(Object* obj)
@@ -149,7 +150,6 @@ static int sweep(Object* obj)
   
   return 0;
 }
-
 
 t_MetaObject MetaObject = {
   {NULL, NULL, NULL, NULL},

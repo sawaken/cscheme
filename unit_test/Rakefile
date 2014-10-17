@@ -57,6 +57,8 @@ TESTS = {
                        "../src/type/meta_object.o",
                        "../src/type/form.o",
                        "../src/type/cell.o",
+                       "../src/type/env.o",	
+                       "../src/type/parameter.o",	
                        "../src/type/dummy.o",
                        "../src/type/type.o"],
 
@@ -67,9 +69,13 @@ TESTS = {
                                "../src/type/cell.o",
                                "../src/type/dummy.o",
                                "../src/type/type.o"],
+
+  "type/test_lambda" => ["type/test_lambda.o",
+                         "../src/type/meta_object.o",
+                         "../src/type/lambda.o",
+                         "../src/type/dummy.o",
+                         "../src/type/type.o"],
 }
-
-
 
 task :all => ["clean", *TESTS.keys]
 task :default => "run"
