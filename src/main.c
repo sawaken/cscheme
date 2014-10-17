@@ -1,11 +1,6 @@
 #include <stdio.h>
-
 #include "type/type.h"
 #include "pcheme.h"
-#include "parse.h"
-#include "eval.h"
-#include "special_forms.h"
-#include "prim_funcs.h"
 
 #define REPL_MODE 1
 
@@ -27,5 +22,3 @@ int main()
 
   return 0;
 }
-
-

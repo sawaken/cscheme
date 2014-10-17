@@ -1,4 +1,5 @@
 #include "type/type.h"
+#include "initial_bind.h"
 #include "pcheme.h"
 
 static Interpreter* new(void)

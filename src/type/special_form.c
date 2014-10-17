@@ -35,8 +35,7 @@ static bool validArgc(Object* sf, int argc)
   return pull(sf)->len_min <= argc && argc <= pull(sf)->len_max;
 }
 
-static bool doAction(Object* sf, Object* meta,
-			Object* cont)
+static bool doAction(Object* sf, Object* meta, Object* cont)
 {
   return pull(sf)->action(meta, cont);
 }
