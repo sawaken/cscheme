@@ -1,4 +1,5 @@
 #include "type/type.h"
+#include "util.h"
 #include "eval.h"
 
 void TailCallOptimize(Object* meta, Object* cont, Object* tail)
@@ -6,21 +7,19 @@ void TailCallOptimize(Object* meta, Object* cont, Object* tail)
   Object* top = continouation.top(cont);
 
   if (IsA(tail, &Cell)) {
-    Continuation.replace(cont, Form.new(meta, Form.env(top), tail, LS.length(tail)));
+    Continuation.replace(cont, Form.new(meta, Form.env(top), tail, Util.length(tail)));
   } else {
     Continuation.replace(cont, tail);
   }
 }
 
-void NextStackFrame(Object* meta, Object* cont, Object* next)
+void StackNextFrame(Object* meta, Object* cont, Object* env, Object* next)
 {
-  Object* top = continouation.top(cont);
-
   if (IsA(next, &Cell)) {
-    Continuation.push(cont, Form.new(meta, Form.env(top), next, LS.length(next)));
+    Continuation.push(cont, Form.new(meta, env, next, Util.length(next)));
   }
   else if (IsA(next, &Symbol)) {
-    Object* solved = Env.find(Form.env(top), next);
+    Object* solved = Env.find(env, next);
     if (solved != NULL) {
       Continuation.push(cont, solved);
     } else {
@@ -45,9 +44,16 @@ void ApplyContinuation(Object* meta, Object* cont, Object* top)
 
 Object* MakeForm(Object* meta, Object* lambda, Object** args, int argc)
 {
+  Object* exp = Util.arrayToList(meta, Lambda.exps(lambda), Lambda.expc(lambda));
+  Object* env = Env.new(meta, Lambda.env(lambda));
+  Object* form = Form.new(meta, env, exp, Lambda.expc(lambda), true);
+  
+  Util.assign(meta, Lambda.parameter(lambda), env, args, argc);
+  MetaObject.release(exp);
 
-
+  return form;
 }
+
 
 void ApplyLambda(Object* meta, Object* cont, Object* lambda,
 		 Object** args, int argc)
@@ -86,6 +92,37 @@ void Apply(Object* meta, Object* cont, Object* form)
   Continuation.push(cont, Exception.new(meta, String.new(meta, "apply error.")));
 }
 
+bool StackOperation(Object* meta, Object* cont, Object* top)
+{
+  if (IsA(top, &Exception)) {
+    Raise(meta, cont);
+    return true;
+  }
+
+  if (!IsA(top, &Form)) {
+    Continuation.returnTopToForm(cont);
+    return true;
+  }
+
+  if (Form.isBody(top) && Form.restNum(top) == 1) {
+    TailCallOptimize(meta, cont, Form.next(top));
+    return true;
+  }
+    
+  if (Form.pos(top) > 0 && IsA(Form.evaluatedElement(top, 0), &SpecialForm)) {
+    if (SpecialForm.doAction(Form.evaluatedElement(top, 0), meta, cont)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+void Raise(Object* meta, Object* cont)
+{
+  Continuation.erase(cont, 0, Continuation.size(cont) - 1);
+}
+
 Object* Eval(Object* meta, Object* cont)
 {
   while (true) {
@@ -95,31 +132,13 @@ Object* Eval(Object* meta, Object* cont)
       return top;
     }
 
-    if (IsA(top, &Exception)) {
-      
-    }
-
-    if (!IsA(top, &Form)) {
-      Continuation.returnTopToForm(cont);
+    if (StackOperation(meta, cont, top))
       continue;
-    }
-
-    if (Form.isBody(top) && Form.restNum(top) == 1) {
-      TailCallOptimize(meta, cont, Form.next(top));
-      continue;
-    }
-    
-    if (Form.pos(top) > 0 && IsA(Form.evaluatedElement(top, 0), &SpecialForm)) {
-      if (SpecialForm.doAction(Form.evaluatedElement(top, 0), meta, cont)) {
-	continue;
-      }
-    }
 
     if (Form.rest(top) > 0) {
-      NextStackFrame(meta, cont, Form.next(top));
-      continue;
+      StackNextFrame(meta, cont, Form.env(top), Form.next(top));
+    } else {
+      Apply(meta, cont, top);
     }
-
-    Apply(meta, cont, top);
   }
 }

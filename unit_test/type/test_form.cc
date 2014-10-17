@@ -12,7 +12,6 @@ protected:
   
   virtual void SetUp() {
     meta = MetaObject.New(100);
-    g = (Generator){meta, Cell.New, NULL, NULL};
     a = Dummy.New(meta, NULL);
     b = Dummy.New(meta, NULL);
     c = Dummy.New(meta, NULL);
@@ -20,7 +19,7 @@ protected:
     y = Dummy.New(meta, NULL);
     z = Dummy.New(meta, NULL);
     env = Dummy.New(meta, NULL);
-    exp  = Util.list(&g, 3, a, b, c);
+    exp  = Util.list(meta, 3, a, b, c);
     form = Form.New(meta, env, exp, 3, true);
   }
 };

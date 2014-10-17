@@ -122,8 +122,11 @@ extern t_SpecialForm SpecialForm;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* meta, Object* param_list, 
-		 Object** exps, int len);
+  Object* (*New)(Object* meta, Object* param,
+		 Object* const exps[], int length);
+  Object* (*param)(Object* lambda);
+  Object** (*exps)(Object* lambda);
+  int (*expc)(Object* lambda);
 } t_Lambda;
 extern t_Lambda Lambda;
 
@@ -131,6 +134,7 @@ typedef struct
 {
   Controller con;
   Object* (*New)(Object* meta, Object* parent);
+  int (*size)(Object* env);
   void (*bind)(Object* env, Object* key, Object* value);
   Object* (*find)(Object* env, Object* key,
 		  bool (*comp)(Object*, Object*));
@@ -156,8 +160,12 @@ extern t_String String;
 typedef struct
 {
   Controller con;
-  Object* (*New)(Object* meta, Object** params,
+  Object* (*New)(Object* meta, Object* const params[],
 		 int paramc, Object* rest);
+  int (*paramc)(Object* param);
+  Object** (*params)(Object* param);
+  Object* (*rest)(Object* param);
+  Object* (*at)(Object* param, int pos);
 } t_Parameter;
 extern t_Parameter Parameter;
 

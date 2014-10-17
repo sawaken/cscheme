@@ -33,6 +33,11 @@ static Object* new(Object* meta, Object* parent)
   return MetaObject.gen(meta, Type, data);
 }
 
+static int size(Object* env)
+{
+  return pull(env)->size;
+}
+
 static void bind(Object* env, Object* key, Object* value)
 {
   int pos = pull(env)->size++;
@@ -44,7 +49,7 @@ static void bind(Object* env, Object* key, Object* value)
 static Object* find(Object* env, Object* key,
 		    bool (*comp)(Object*, Object*))
 {
-  for (int i = 0; i < size; i++)
+  for (int i = 0; i < size(env); i++)
     if (comp(pull(env)->key[i], key))
       return pull(env)->value[i];
 
@@ -57,5 +62,5 @@ static Object* find(Object* env, Object* key,
 
 t_Env Env = {
   {NULL, apply, NULL, NULL},
-  new, bind, find
+  new, size, bind, find
 };

@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <assert.h>
+#include <stdarg.h>
 #include "type.h"
 
 static void* Type = &Form;

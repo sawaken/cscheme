@@ -1,4 +1,5 @@
 #include "type/type.h"
+#include "eval.h"
 
 static bool _if(Object* meta, Object* cont)
 {
@@ -7,20 +8,17 @@ static bool _if(Object* meta, Object* cont)
   if (Form.pos(form) != 2)
     return false;
 
-    Object* p = Form.evaluatedElement(form, 1);
-    Object* a = Form.rawElement(form, 2);
-    Object* b = Form.rawElement(form, 3);
-    Object* selected = Bool.which(p, a, b);
+  Object* p = Form.evaluatedElement(form, 1);
+  Object* a = Form.rawElement(form, 2);
+  Object* b = Form.rawElement(form, 3);
+  Object* selected = Bool.select(p, a, b);
 
-    if (IsA(selected, &Cell)) {
-      Continuation.replace(cont, Form.new(meta, selected));
-    } else {
-      Continuation.replace(cont, selected);
-    }
-  }
+  StackNextFrame(meta, cont, Form.env(form), selected);
+  Continuation.erase(cont, Continuation.size(cont) - 2, 1);
+
+  return true;
 }
 
-// Arg1 should be [Lambda]
 static bool call_cc(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
@@ -28,22 +26,26 @@ static bool call_cc(Object* meta, Object* cont)
   if (Form.pos(form) != 2)
     return false;
 
-  Object* lambda = Form.evaluatedArg(form, 1); //type check
-  Object* cc = Continuation.dup(cont);
+  Object* lambda = Form.evaluatedElemnt(form, 1);
+  Object* cc = Continuation.new(meta, cont);
+
   Continuation.pop(cc);
-  Continuation.replace(cont, Lambda.makeForm(meta, lambda, &cc, 1));
+  Continuation.replace(cont, Util.form(meta, Form.env(form), false, 2, lambda, cc));
+
   return true;
 }
 
-// Arg1 should be [Symbol]
 static bool lambda(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
-  Object* lambda = Lambda.new(meta,
-			      Form.rawArg(form, 1), //type check
-			      Form.elements(form, 2),
-			      Form.restNum(form) - 1)
-  Continuation.replace(cont, lambda);
+  Object* param = Util.parseParam(meta, Form.rawElement(form, 1));
+
+  if (param == NULL) {
+    Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid params.")));
+  } else {
+    Continuation.replace(cont, Lambda.new(meta, param, Form.rawElements(form, 2), 
+					  Form.size(form) - 2));
+  }
 }
 
 

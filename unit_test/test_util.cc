@@ -12,8 +12,7 @@
 TEST(New, case1)
 {
   Object* meta = MetaObject.New(10);
-  Generator g = {meta, Cell.New, NULL, NULL};
-  Object* ls = Util.list(&g, 2, I(0), I(1));
+  Object* ls = Util.list(meta, 2, I(0), I(1));
 
   ASSERT_FALSE(Cell.empty(ls));
   ASSERT_EQ(0, GI(car(ls)));
