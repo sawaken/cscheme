@@ -58,7 +58,7 @@ Object* MakeForm(Object* meta, Object* lambda, Object** args, int argc)
 void ApplyLambda(Object* meta, Object* cont, Object* lambda,
 		 Object** args, int argc)
 {
-  if (Parameter.validArgc(Lambda.parameter(lambda), argc)) {
+  if (Parameter.validArgLength(Lambda.parameter(lambda), argc)) {
     Continuation.replace(cont, MakeForm(meta, lambda, args, argc));
   } else {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "lambda arg error.")));

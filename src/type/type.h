@@ -166,6 +166,7 @@ typedef struct
   Object** (*params)(Object* param);
   Object* (*rest)(Object* param);
   Object* (*at)(Object* param, int pos);
+  bool (*validArgLength)(Object* param, int length);
 } t_Parameter;
 extern t_Parameter Parameter;
 

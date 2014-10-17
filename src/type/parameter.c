@@ -63,7 +63,15 @@ static Object* at(Object* param, int pos)
   return pull(param)->params[pos];
 }
 
+static bool validArgLength(Object* param, int length)
+{
+  if (rest(param) == NULL)
+    return length == paramc(param);
+  else
+    return length >= paramc(param);
+}
+
 t_Parameter Parameter = {
   {release, apply, NULL, NULL},
-  new, paramc, params, rest, at
+  new, paramc, params, rest, at, validArgLength
 };
