@@ -7,7 +7,6 @@
 #define new New
 #endif
 
-#define LEN_INF 100000
 #define pull(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 
 typedef struct Object Object;
@@ -44,6 +43,10 @@ typedef struct
   void (*unreferred)(Object* obj);
   void (*release)(Object* obj);
   int (*sweep)(Object* obj);
+  Object* (*findSymbol)(Object* meta, const char* name,
+			int (*strcmp)(const char* s1,
+				      const char* s2));
+  
 } t_MetaObject;
 extern t_MetaObject MetaObject;
 
@@ -112,9 +115,7 @@ typedef struct
 {
   Controller con;
   Object* (*New)(Object* meta, const char* name,
-		 bool (*action)(Object* meta, Object* cont),
-		 int len_min, int len_max);
-  bool (*validArgc)(Object* sf, int argc);
+		 bool (*action)(Object* meta, Object* cont));
   bool (*doAction)(Object* sf, Object* meta, Object* cont);
 } t_SpecialForm;
 extern t_SpecialForm SpecialForm;
@@ -184,6 +185,15 @@ extern t_PrimFunc PrimFunc;
 typedef struct
 {
   Controller con;
+  Object* (*New)(Object* meta, bool b);
+  bool (*to_b)(Object* b);
+  Object* (*select)(Object* b, Object* obj1, Object* obj2);
+} t_Bool;
+extern t_Bool Bool;
+
+typedef struct
+{
+  Controller con;
   Object* (*New)(Object* meta, Object* ref);
   Object* (*ref)(Object* dummy);
   bool (*isReleased)(Object* dummy);
@@ -197,8 +207,8 @@ extern t_Dummy Dummy;
 extern "C" {
 #endif
 
-bool IsA(Object* obj, void* type);
-Controller* Con(Object* obj);
+  bool IsA(Object* obj, void* type);
+  Controller* Con(Object* obj);
 
 #ifdef __cplusplus
 }

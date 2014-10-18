@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 #include "type/type.h"
 #include "util.h"
 
@@ -92,13 +93,88 @@ static void assign(Object* meta, Object* param, Object* env, Object** args, int 
   }
 }
 
-static int Comp(Object* a, Object* b)
+static int comp(Object* a, Object* b)
 {
   if (a == b) return 0;
   if (a < b) return 1;
   else return -1;
 }
 
+static Object* singletonSymbol(Object* meta, const char* name)
+{
+  Object* existing = MetaObject.findSymbol(meta, name, strcmp);
+
+  if (existing != NULL)
+    return existing;
+  else
+    return Symbol.new(meta, name);
+}
+
+static int i_dotPos(int i, Object* list, const char* dot)
+{
+  if (Cell.empty(list))
+    return -1;
+  if (strcmp(Symbol.to_s(Cell.car(list)), dot) == 0)
+    return i;
+  else
+    return i_dotPos(i + 1, Cell.cdr(list), dot);
+}
+
+static bool include(Object* list, Object* obj, int (*comp)(Object*, Object*))
+{
+  return !Cell.empty(list)
+    && (comp(Cell.car(list), obj) == 0 || include(Cell.cdr(list), obj, comp));
+}
+
+static bool listDup(Object* list)
+{
+  return !Cell.empty(list)
+    && (include(Cell.cdr(list), Cell.car(list), comp) || listDup(Cell.cdr(list)));
+}
+
+static void listToArray(Object* list, Object* array[])
+{
+  if (!Cell.empty(list)){
+    *array = Cell.car(list);
+    listToArray(Cell.cdr(list), array + 1);
+  }
+}
+
+static Object* ith(Object* list, int i)
+{
+  if (Cell.empty(list))
+    return NULL;
+  if (i == 0)
+    return Cell.car(list);
+  else
+    return ith(Cell.cdr(list), i - 1);
+}
+
+static Object* parseParam(Object* meta, Object* param_list, const char* dot)
+{
+  int len = length(param_list);
+  if (listDup(param_list) || len > 100)
+    return NULL;
+
+  int dot_pos = i_dotPos(0, param_list, dot);
+  if (dot_pos != -1 && dot_pos != length(param_list) - 2)
+    return NULL;
+
+  Object* rest;
+  if (dot_pos == -1) {
+    rest = NULL;
+  } else {
+    rest = ith(param_list, dot_pos + 1);
+    len = dot_pos;
+  }
+
+  Object* param_array[100];
+  listToArray(param_list, param_array);
+
+  return Parameter.new(meta, param_array, len, rest);
+}
+
 t_Util Util = {
-  list, symList, length, isList, form, arrayToList, assign, Comp
+  list, symList, length, isList, form, arrayToList, assign, comp, singletonSymbol,
+  include, listDup, listToArray, ith, parseParam
 };

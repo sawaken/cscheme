@@ -14,7 +14,13 @@ typedef struct
   Object* (*form)(Object* meta, Object* env, bool body, int length, ...);
   Object* (*arrayToList)(Object* meta, Object** objects, int length);
   void (*assign)(Object* meta, Object* param, Object* env, Object** args, int argc);
-  int (*Comp)(Object* a, Object* b);
+  int (*comp)(Object* a, Object* b);
+  Object* (*singletonSymbol)(Object* meta, const char* name);
+  bool (*include)(Object* list, Object* obj, int (*comp)(Object*, Object*));
+  bool (*listDup)(Object* list);
+  void (*listToArray)(Object* list, Object* array[]);
+  Object* (*ith)(Object* list, int i);
+  Object* (*parseParam)(Object* meta, Object* param_list, const char* dot);
 } t_Util;
 extern t_Util Util;
 

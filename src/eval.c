@@ -19,7 +19,7 @@ void StackNextFrame(Object* meta, Object* cont, Object* env, Object* next)
     Continuation.push(cont, Form.new(meta, env, next, Util.length(next), false));
   }
   else if (IsA(next, &Symbol)) {
-    Object* solved = Env.find(env, next, Util.Comp);
+    Object* solved = Env.find(env, next, Util.comp);
     if (solved != NULL) {
       Continuation.push(cont, solved);
     } else {

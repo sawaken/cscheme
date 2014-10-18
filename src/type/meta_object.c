@@ -151,7 +151,20 @@ static int sweep(Object* obj)
   return 0;
 }
 
+static Object* findSymbol(Object* meta, const char* name,
+			  int (*strcmp)(const char* s1, const char* s2))
+{
+  Object** os = pull(meta)->objects;
+
+  for (int i = 0; i < pull(meta)->pos; i++) {
+    if (os[i] == NULL) continue;
+    if (IsA(os[i], &Symbol) && strcmp(name, Symbol.to_s(os[i])) == 0)
+      return os[i];
+  }
+  return NULL;
+}
+
 t_MetaObject MetaObject = {
   {NULL, NULL, NULL, NULL},
-  new, gen, referred, unreferred, release, sweep
+  new, gen, referred, unreferred, release, sweep, findSymbol
 };

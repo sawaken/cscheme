@@ -1,9 +1,21 @@
+#include <stdlib.h>
 #include "type/type.h"
 #include "eval.h"
+#include "util.h"
+
+static int arglen(Object* form)
+{
+  return Form.pos(form) + Form.restNum(form) - 1;
+}
 
 static bool _if(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
+  
+  if (arglen(form) < 1 || 2 < arglen(form)) {
+    Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
+    return true;
+  }
 
   if (Form.pos(form) != 2)
     return false;
@@ -23,14 +35,19 @@ static bool call_cc(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
 
+  if (arglen(form) != 1) {
+    Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
+    return true;
+  }
+
   if (Form.pos(form) != 2)
     return false;
 
-  Object* lambda = Form.evaluatedElemnt(form, 1);
+  Object* lambda = Form.evaluatedElement(form, 1);
   Object* cc = Continuation.new(meta, cont);
 
   Continuation.pop(cc);
-  Continuation.replace(cont, Util.form(meta, Form.env(form), false, 2, lambda, cc));
+  Continuation.popAndPush(cont, Util.form(meta, Form.env(form), false, 2, lambda, cc));
 
   return true;
 }
@@ -38,13 +55,20 @@ static bool call_cc(Object* meta, Object* cont)
 static bool lambda(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
-  Object* param = Util.parseParam(meta, Form.rawElement(form, 1));
+
+  if (arglen(form) < 2) {
+    Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
+    return true;
+  }
+
+  Object* param = Util.parseParam(meta, Form.rawElement(form, 1), ".");
 
   if (param == NULL) {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid params.")));
   } else {
-    Continuation.replace(cont, Lambda.new(meta, param, Form.rawElements(form, 2), 
-					  Form.size(form) - 2));
+    Continuation.popAndPush(cont, Lambda.new(meta, Form.env(form), param,
+					     Form.rawElements(form, 2), 
+					     arglen(form) - 1));
   }
 }
 
@@ -52,9 +76,9 @@ static bool lambda(Object* meta, Object* cont)
 void BindSF(Generator* g, Object* env)
 {
   Env.bind(env, g->symbol(g->meta_obj, "if"), 
-	   SpecialForm.new(meta, "if", _if, 2, 3));
+	   SpecialForm.new(g->meta_obj, "if", _if));
   Env.bind(env, g->symbol(g->meta_obj, "call/cc"),
-	   SpecialForm.new(meta, "call/cc", call_cc, 1, 1));
+	   SpecialForm.new(g->meta_obj, "call/cc", call_cc));
   Env.bind(env, g->symbol(g->meta_obj, "lambda"),
-	   SpecialForm.new(meta, "lambda", lambda, 2, LEN_INF));
+	   SpecialForm.new(g->meta_obj, "lambda", lambda));
 }
