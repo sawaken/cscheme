@@ -19,6 +19,7 @@ TESTS = {
                   "../src/util.o",
                   "../src/type/meta_object.o",
                   "../src/type/cell.o",
+                  "../src/type/integer.o",
                   "../src/type/symbol.o",
                   "../src/type/form.o",
                   "../src/type/continuation.o",

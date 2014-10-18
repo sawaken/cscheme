@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <assert.h>
 #include "type/type.h"
 #include "util.h"
 #include "eval.h"
@@ -32,6 +33,8 @@ void StackNextFrame(Object* meta, Object* cont, Object* env, Object* next)
 
 void ApplyContinuation(Object* meta, Object* cont, Object* alt_cont, Object* form)
 {
+  assert(Form.restNum(form) == 0);
+
   if (Form.pos(form) != 2) {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "arg error.")));
   } else {
@@ -64,6 +67,8 @@ void ApplyLambda(Object* meta, Object* cont, Object* lambda,
 
 void Apply(Object* meta, Object* cont, Object* form)
 {
+  assert(Form.restNum(form) == 0);
+
   Object* command = Form.evaluatedElement(form, 0);
 
   if (IsA(command, &Lambda)) {
@@ -75,9 +80,9 @@ void Apply(Object* meta, Object* cont, Object* form)
 
   if (IsA(command, &PrimFunc)) {
     Continuation.popAndPush(cont, PrimFunc.apply(command,
-					      meta,
-					      Form.evaluatedElements(form, 1),
-					      Form.pos(form) - 1));
+						 meta,
+						 Form.evaluatedElements(form, 1),
+						 Form.pos(form) - 1));
     return;
   }
 
