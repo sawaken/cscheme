@@ -40,3 +40,64 @@ TEST_F(EvalTest, TailCallOptimize_cell_tail)
   ASSERT_EQ(2, F.restNum(C.top(cont)));
   ASSERT_EQ(dummy1, F.next(C.top(cont)));
 }
+
+TEST_F(EvalTest, TailCallOptimize_noncell_tail)
+{
+  O* tail = D.New(meta, NULL);
+
+  C.push(cont, dummy3);
+  TailCallOptimize(meta, cont, env1, tail);
+
+  ASSERT_EQ(1, C.size(cont));
+  ASSERT_EQ(tail, C.top(cont));
+}
+
+TEST_F(EvalTest, StackNextFrame_with_cell)
+{
+  O* next = Util.list(meta, 2, dummy1, dummy2);
+
+  StackNextFrame(meta, cont, env1, next);
+  
+  ASSERT_EQ(1, C.size(cont));
+  ASSERT_EQ(2, F.restNum(C.top(cont)));
+  ASSERT_EQ(dummy1, F.next(C.top(cont)));
+}
+
+TEST_F(EvalTest, StackNextFrame_with_bound_symbol)
+{
+  O* next = Symbol.New(meta, "hoge");
+
+  Env.bind(env1, next, dummy1);
+  StackNextFrame(meta, cont, env1, next);
+  
+  ASSERT_EQ(1, C.size(cont));
+  ASSERT_EQ(dummy1, C.top(cont));
+}
+
+TEST_F(EvalTest, StackNextFrame_with_unbound_symbol)
+{
+  O* next = Symbol.New(meta, "hoge");
+
+  StackNextFrame(meta, cont, env1, next);
+  
+  ASSERT_EQ(1, C.size(cont));
+  ASSERT_TRUE(IsA(C.top(cont), &Exception));
+}
+
+TEST_F(EvalTest, StackNextFrame_with_object)
+{
+  StackNextFrame(meta, cont, env1, dummy1);
+  
+  ASSERT_EQ(1, C.size(cont));
+  ASSERT_EQ(dummy1, C.top(cont));
+}
+
+TEST_F(EvalTest, ApplyContinuation_with_valid_arg)
+{
+  
+}
+
+TEST_F(EvalTest, ApplyContinuation_with_invalid_arg)
+{
+
+}

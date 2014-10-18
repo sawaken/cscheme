@@ -47,10 +47,10 @@ static void bind(Object* env, Object* key, Object* value)
 }
 
 static Object* find(Object* env, Object* key,
-		    bool (*comp)(Object*, Object*))
+		    int (*comp)(Object*, Object*))
 {
   for (int i = 0; i < size(env); i++)
-    if (comp(pull(env)->key[i], key))
+    if (comp(pull(env)->key[i], key) == 0)
       return pull(env)->value[i];
 
   if (pull(env)->parent != NULL) {

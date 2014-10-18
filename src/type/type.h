@@ -138,7 +138,7 @@ typedef struct
   int (*size)(Object* env);
   void (*bind)(Object* env, Object* key, Object* value);
   Object* (*find)(Object* env, Object* key,
-		  bool (*comp)(Object*, Object*));
+		  int (*comp)(Object*, Object*));
 } t_Env;
 extern t_Env Env;
 

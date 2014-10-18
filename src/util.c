@@ -92,11 +92,13 @@ static void assign(Object* meta, Object* param, Object* env, Object** args, int 
   }
 }
 
-static bool EQ(Object* a, Object* b)
+static int Comp(Object* a, Object* b)
 {
-  return a == b;
+  if (a == b) return 0;
+  if (a < b) return 1;
+  else return -1;
 }
 
 t_Util Util = {
-  list, symList, length, isList, form, arrayToList, assign, EQ
+  list, symList, length, isList, form, arrayToList, assign, Comp
 };

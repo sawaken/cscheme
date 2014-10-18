@@ -18,7 +18,7 @@ void StackNextFrame(Object* meta, Object* cont, Object* env, Object* next)
     Continuation.push(cont, Form.new(meta, env, next, Util.length(next), false));
   }
   else if (IsA(next, &Symbol)) {
-    Object* solved = Env.find(env, next, Util.EQ);
+    Object* solved = Env.find(env, next, Util.Comp);
     if (solved != NULL) {
       Continuation.push(cont, solved);
     } else {
@@ -30,14 +30,12 @@ void StackNextFrame(Object* meta, Object* cont, Object* env, Object* next)
   }
 }
 
-void ApplyContinuation(Object* meta, Object* cont, Object* top)
+void ApplyContinuation(Object* meta, Object* cont, Object* alt_cont, Object* form)
 {
-  if (Form.pos(top) != 2) {
+  if (Form.pos(form) != 2) {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "arg error.")));
   } else {
-    Continuation.trans(cont,
-		       Form.evaluatedElement(top, 0),
-		       Form.evaluatedElement(top, 1));
+    Continuation.trans(cont, alt_cont, Form.evaluatedElement(form, 1));
   }
 }
 
@@ -74,7 +72,7 @@ void Apply(Object* meta, Object* cont, Object* form)
 		Form.pos(form) - 1);
     return;
   }
-    
+
   if (IsA(command, &PrimFunc)) {
     Continuation.popAndPush(cont, PrimFunc.apply(command,
 					      meta,
@@ -84,7 +82,7 @@ void Apply(Object* meta, Object* cont, Object* form)
   }
 
   if (IsA(command, &Continuation)) {
-    ApplyContinuation(meta, cont, form);
+    ApplyContinuation(meta, cont, command, form);
     return;
   }
 

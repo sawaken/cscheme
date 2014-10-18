@@ -1,9 +1,11 @@
 #include <gtest/gtest.h>
 #include <type/type.h>
 
-bool eq(Object* a, Object* b)
+int eq(Object* a, Object* b)
 {
-  return a == b;
+  if (a == b) return 0;
+  if (a < b) return 1;
+  else return -1;
 }
 
 TEST(test, bind_and_find)
