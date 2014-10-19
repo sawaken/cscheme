@@ -137,10 +137,10 @@ TEST_F(EvalSubTest, MakeForm)
   ASSERT_EQ(form1, F.rawElement(form, 0));
   ASSERT_EQ(form2, F.rawElement(form, 1));
 
-  ASSERT_EQ(dummy1, Env.find(F.env(form), sym1, Util.Comp));
-  ASSERT_EQ(dummy2, Env.find(F.env(form), sym2, Util.Comp));
-  ASSERT_EQ(1, Util.length(Env.find(F.env(form), sym3, Util.Comp)));
-  ASSERT_EQ(dummy3, Cell.car(Env.find(F.env(form), sym3, Util.Comp)));
+  ASSERT_EQ(dummy1, Env.find(F.env(form), sym1, Util.comp));
+  ASSERT_EQ(dummy2, Env.find(F.env(form), sym2, Util.comp));
+  ASSERT_EQ(1, Util.length(Env.find(F.env(form), sym3, Util.comp)));
+  ASSERT_EQ(dummy3, Cell.car(Env.find(F.env(form), sym3, Util.comp)));
 }
 
 TEST_F(EvalSubTest, Apply_fail)
