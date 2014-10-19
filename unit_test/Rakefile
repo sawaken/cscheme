@@ -6,7 +6,7 @@ GTEST_DIR = "gtest-1.7.0"
 SRC_DIR = "../src"
 LIB = ["libgtest.a", "libgtest_main.a"]
 
-TYPES = [:bool, :cell, :continuation, :dummy, :env, :exception, :form,
+TYPES = [:bool, :cell, :character, :continuation, :dummy, :env, :exception, :form,
          :integer, :lambda, :meta_object, :parameter, :prim_func, :special_form,
          :string, :symbol] + [:type]
 
@@ -22,6 +22,24 @@ TESTS = {
                   "../src/util.o",
                   *TYPES.map{|t| "../src/type/#{t}.o"},
                  ],
+
+  "test_parse" => ["test_parse.o",
+                   "../src/parse.o",
+                   "../src/parse_util.o",
+                   "../src/util.o",
+                   *TYPES.map{|t| "../src/type/#{t}.o"},
+                  ],
+
+  "test_pcheme" => ["test_pcheme.o",
+                    "../src/special_forms.o",
+                    "../src/prim_funcs.o",
+                    "../src/pcheme.o",
+                    "../src/eval.o",
+                    "../src/parse.o",
+                    "../src/parse_util.o",
+                    "../src/util.o",
+                    *TYPES.map{|t| "../src/type/#{t}.o"},
+                   ],
 
   "test_util" => ["test_util.o",
                   "../src/util.o",

@@ -10,7 +10,7 @@ typedef struct
 
 typedef struct
 {
-  Object* (*New)(void);
+  Interpreter* (*New)(void);
   void (*eval)(Interpreter* inter, const char code[]);
   void (*ret)(Interpreter* inter, Object* evaluated);
   Object* (*getEvaluated)(Interpreter* inter);

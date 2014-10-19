@@ -4,6 +4,8 @@
 #include "util.h"
 #include "eval.h"
 
+#include <stdio.h>
+
 void TailCallOptimize(Object* meta, Object* cont, Object* env, Object* tail)
 {
   if (IsA(tail, &Cell)) {
@@ -143,4 +145,7 @@ Object* Eval(Object* meta, Object* cont)
       Apply(meta, cont, top);
     }
   }
+
+  printf("Strange exit\n");
+  exit(1);
 }

@@ -40,11 +40,17 @@ static void apply(Object* obj, void (*proc)(Object*))
 
 static Object* new(Object* meta, Object* car, Object* cdr)
 {
-  assert((car != NULL && cdr != NULL) || (car == NULL && cdr == NULL));
+  assert(!(car == NULL && cdr != NULL));
 
   Data* data = malloc(sizeof(Data));
   data->car = car;
-  data->cdr = cdr;
+
+  if (car != NULL && cdr == NULL) {
+    data->cdr = new(meta, NULL, NULL);
+  } else {
+    data->cdr = cdr;
+  }
+
   return MetaObject.gen(meta, Type, data);
 }
 

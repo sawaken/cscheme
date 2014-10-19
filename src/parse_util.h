@@ -5,11 +5,13 @@
 extern "C" {
 #endif
 
-  bool hasOnlyDigit(char str[]);
+  int StringEndPos(const char str[], int begin, int end, bool escaped);
+  int LineEndPos(const char str[], int begin, int end);
+  bool hasOnlyDigit(const char str[]);
   bool isIdent(char c);
-  int BracketNestOutPosition(char str[], int nest_level, int begin_pos, int end_pos);
-  bool CheckBracket(char str[], int begin_pos, int end_pos, int countf);
-  int WordEndPosition(char str[], int begin_pos, int end_pos);
+  int BracketNestOutPosition(const char str[], int nest_level, int begin_pos, int end_pos);
+  bool CheckBracket(const char str[], int begin_pos, int end_pos, int countf);
+  int WordEndPosition(const char str[], int begin_pos, int end_pos);
   bool isSeparation(char c);
   bool between(char c, char s, char t);
   bool array_member(char c, char array[], int len);

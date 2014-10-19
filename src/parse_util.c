@@ -4,7 +4,31 @@
 static char SPECIAL_ID[] = {'!', '$', '%', '&', '*', '+', '-', '.',
 			    '/', '<', '=', '>', '?', '@', '^', '_'};
 
-bool hasOnlyDigit(char str[])
+int StringEndPos(const char str[], int begin, int end, bool escaped)
+{
+  if( begin >= end )
+    return -1;
+  if(escaped)
+    return StringEndPos(str, begin + 1, end, false);
+  if( str[begin] == '"' )
+    return begin;
+  if( str[begin] == '\\' )
+    return StringEndPos(str, begin + 1, end, true);
+  else
+    return StringEndPos(str, begin + 1, end, false);
+}
+
+int LineEndPos(const char str[], int begin, int end)
+{
+  if( begin >= end )
+    return end;
+  if( str[begin] == '\n' || str[begin] == '\0' )
+    return begin;
+  else
+    return LineEndPos(str, begin + 1, end);
+}
+
+bool hasOnlyDigit(const char str[])
 {
   for(int i = 0; str[i] != '\0'; i++)
     if(str[i] < '0' || '9' < str[i])
@@ -22,7 +46,7 @@ bool isIdent(char c)
     return false;
 }
 
-int BracketNestOutPosition(char str[], int nest_level, int begin_pos, int end_pos)
+int BracketNestOutPosition(const char str[], int nest_level, int begin_pos, int end_pos)
 {
   if(nest_level == 0){
     return begin_pos;
@@ -37,7 +61,7 @@ int BracketNestOutPosition(char str[], int nest_level, int begin_pos, int end_po
   }
 }
 
-bool CheckBracket(char str[], int begin_pos, int end_pos, int countf)
+bool CheckBracket(const char str[], int begin_pos, int end_pos, int count)
 {
   if( begin_pos == end_pos )
     return count == 0;
@@ -49,7 +73,7 @@ bool CheckBracket(char str[], int begin_pos, int end_pos, int countf)
     return CheckBracket(str, begin_pos + 1, end_pos, count);
 }
 
-int WordEndPosition(char str[], int begin_pos, int end_pos)
+int WordEndPosition(const char str[], int begin_pos, int end_pos)
 {
   if(begin_pos == end_pos){
     return end_pos;

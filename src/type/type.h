@@ -23,7 +23,7 @@ typedef struct
   Object* meta_obj;
   Object* (*cons)(Object*, Object*, Object*);
   Object* (*symbol)(Object*, const char[]);
-  Object* (*exception)(Object*, char*);
+  Object* (*exception)(Object*, const char*);
 } Generator;
 
 typedef struct
@@ -39,6 +39,8 @@ typedef struct
   Controller con;
   Object* (*New)(int init_max_size);
   Object* (*gen)(Object* meta, void* type, void* data);
+  int (*size)(Object* meta);
+  int (*pos)(Object* meta);
   void (*referred)(Object* obj);
   void (*unreferred)(Object* obj);
   void (*release)(Object* obj);
@@ -54,6 +56,7 @@ typedef struct
 {
   Controller con;
   Object* (*New)(Object* meta, const char name[]);
+  Object* (*newWithRange)(Object* meta, const char str[], int s, int t);
   char* (*to_s)(Object* symbol);
 } t_Symbol;
 extern t_Symbol Symbol;
@@ -156,6 +159,7 @@ typedef struct
 {
   Controller con;
   Object* (*New)(Object* meta, const char str[]);
+  Object* (*newWithRange)(Object* meta, const char str[], int s, int t);
   char* (*to_s)(Object* string);
 } t_String;
 extern t_String String;
@@ -191,6 +195,14 @@ typedef struct
   Object* (*select)(Object* b, Object* obj1, Object* obj2);
 } t_Bool;
 extern t_Bool Bool;
+
+typedef struct
+{
+  Controller con;
+  Object* (*New)(Object* meta, char c);
+  char (*to_c)(Object* character);
+} t_Character;
+extern t_Character Character;
 
 typedef struct
 {

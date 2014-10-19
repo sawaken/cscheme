@@ -44,6 +44,8 @@ static void bind(Object* env, Object* key, Object* value)
   assert(pos < pull(env)->max_size);
   pull(env)->key[pos] = key;
   pull(env)->value[pos] = value;
+  MetaObject.referred(key);
+  MetaObject.referred(value);
 }
 
 static Object* find(Object* env, Object* key,

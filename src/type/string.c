@@ -18,13 +18,22 @@ static bool release(Object* obj)
   return true;
 }
 
-static Object* new(Object* meta, const char string[])
+static Object* newWithRange(Object* meta, const char str[], int s, int t)
 {
   Data* data = malloc(sizeof(Data));
-  data->length = strlen(string);
-  data->str    = malloc((data->length + 1) * sizeof(char));
-  strcpy(data->str, string);
+  data->str = malloc((t - s + 1) * sizeof(char));
+  data->length = t - s;
+
+  for (int i = s; i < t; i++) 
+    data->str[i - s] = str[i];
+  data->str[t - s] = '\0';
+
   return MetaObject.gen(meta, Type, data);
+}
+
+static Object* new(Object* meta, const char string[])
+{
+  return newWithRange(meta, string, 0, strlen(string));
 }
 
 static char* to_s(Object* obj)
@@ -34,5 +43,5 @@ static char* to_s(Object* obj)
 
 t_String String = {
   {release, NULL, NULL, NULL},
-  new, to_s
+  new, newWithRange, to_s
 };

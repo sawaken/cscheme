@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include "type.h"
@@ -78,6 +79,7 @@ static Object* gen(Object* meta, void* type, void* data)
   Object* object;
 
   if (pull(meta)->size == pull(meta)->max_size) {
+    printf("meta_object overflow\n");
     return NULL;
   }
 
@@ -93,6 +95,16 @@ static Object* gen(Object* meta, void* type, void* data)
     Con(object)->apply(object, referred);
   }
   return object;
+}
+
+static int size(Object* meta)
+{
+  return pull(meta)->size;
+}
+
+static int pos(Object* meta)
+{
+  return pull(meta)->pos;
 }
 
 static void referred(Object* obj)
@@ -168,5 +180,5 @@ static Object* findSymbol(Object* meta, const char* name,
 
 t_MetaObject MetaObject = {
   {NULL, NULL, NULL, NULL},
-  new, gen, referred, unreferred, release, sweep, findSymbol
+  new, gen, size, pos, referred, unreferred, release, sweep, findSymbol
 };
