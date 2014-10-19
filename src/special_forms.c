@@ -70,6 +70,56 @@ static bool lambda(Object* meta, Object* cont)
 					     Form.rawElements(form, 2), 
 					     arglen(form) - 1));
   }
+  return true;
+}
+
+// temporary (because of unconsidering position)
+static bool define(Object* meta, Object* cont)
+{
+  Object* form = Continuation.top(cont);
+
+  if (arglen(form) != 2) {
+    Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
+    return true;
+  }
+
+  if (Form.pos(form) == 1) {
+    if (!IsA(Form.next(form), &Symbol)) {
+      Continuation.push(cont, Exception.new(meta, String.new(meta, "arg should be symbol.")));
+      return true;
+    } else {
+      Form.back(form, Form.next(form));
+      return true;
+    }
+  }
+
+  if (Form.pos(form) == 2) {
+    return false;
+  }
+
+  if (Form.pos(form) == 3) {
+    Env.bind(Form.env(form), Form.evaluatedElement(form, 1), Form.evaluatedElement(form, 2));
+    Continuation.popAndPush(cont, Form.evaluatedElement(form, 1));
+    return true;
+  }
+}
+
+// original function
+static bool meta_info(Object* meta, Object* cont)
+{
+  Object* form = Continuation.top(cont);
+
+  if (arglen(form) != 0) {
+    Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
+    return true;
+  }
+
+  char buf[100];
+  snprintf(buf, sizeof(buf), "[meta: size = %d, pos = %d]",
+	   MetaObject.size(meta), MetaObject.pos(meta));
+
+  Continuation.popAndPush(cont, String.new(meta, buf));
+  return true;
 }
 
 
@@ -81,4 +131,8 @@ void BindSF(Generator* g, Object* env)
 	   SpecialForm.new(g->meta_obj, "call/cc", call_cc));
   Env.bind(env, g->symbol(g->meta_obj, "lambda"),
 	   SpecialForm.new(g->meta_obj, "lambda", lambda));
+  Env.bind(env, g->symbol(g->meta_obj, "define"),
+	   SpecialForm.new(g->meta_obj, "define", define));
+  Env.bind(env, g->symbol(g->meta_obj, "meta-info"),
+	   SpecialForm.new(g->meta_obj, "meta-info", meta_info));
 }

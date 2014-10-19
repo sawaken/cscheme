@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "type/type.h"
 #include "util.h"
 
@@ -13,8 +15,19 @@ def(sum_int)
   }
 }
 
+def(display)
+{
+  for (int i = 0; i < argc; i++) {
+    char buf[100];
+    printf("%s\n", ToStr(args[i], buf));
+  } 
+  return args[argc - 1];
+}
+
 void BindPF(Generator* g, Object* env)
 {
   Env.bind(env, g->symbol(g->meta_obj, "+"),
 	   PrimFunc.new(g->meta_obj, "+", sum_int));
+  Env.bind(env, g->symbol(g->meta_obj, "display"),
+	   PrimFunc.new(g->meta_obj, "display", display));
 }

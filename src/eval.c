@@ -8,11 +8,8 @@
 
 void TailCallOptimize(Object* meta, Object* cont, Object* env, Object* tail)
 {
-  if (IsA(tail, &Cell)) {
-    Continuation.popAndPush(cont, Form.new(meta, env, tail, Util.length(tail), false));
-  } else {
-    Continuation.popAndPush(cont, tail);
-  }
+  StackNextFrame(meta, cont, env, tail);
+  Continuation.erase(cont, Continuation.size(cont) - 2, 1);
 }
 
 void StackNextFrame(Object* meta, Object* cont, Object* env, Object* next)

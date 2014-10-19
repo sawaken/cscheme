@@ -34,3 +34,11 @@ TEST_F(ParseTest, case2)
   ASSERT_EQ(4, Util.length(car(cdr(car(exp)))));
   ASSERT_EQ(4, Util.length(car(cdr(cdr(car(exp))))));
 }
+
+TEST_F(ParseTest, case3)
+{
+  Object* exp = ParseExp("hoge", &g);
+  ASSERT_EQ(1, Util.length(exp));
+  ASSERT_TRUE(IsA(car(exp), &Symbol));
+  ASSERT_STREQ("hoge", Symbol.to_s(car(exp)));
+}

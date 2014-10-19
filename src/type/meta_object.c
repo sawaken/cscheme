@@ -39,9 +39,11 @@ static void add(Object* meta, Object* obj)
       if (pull(meta)->objects[i] == NULL) continue;
       pull(meta)->objects[k] = pull(meta)->objects[i];
       pull(meta)->gc_infos[k] = pull(meta)->gc_infos[i];
+      pull(meta)->objects[k]->meta_obj_pos = k;
       k++;
     }
-    pull(meta)->pos = pull(meta)->size = k;
+    pull(meta)->pos = k;
+    pull(meta)->size = k;
   }
 
   int pos = pull(meta)->pos++;

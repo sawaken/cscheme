@@ -4,4 +4,5 @@
 unit_test/gtest_build
 *.a
 *.o
+.nfs*
 
