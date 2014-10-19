@@ -12,7 +12,7 @@ static bool _if(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
   
-  if (arglen(form) < 1 || 2 < arglen(form)) {
+  if (arglen(form) != 3) {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
     return true;
   }

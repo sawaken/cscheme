@@ -10,13 +10,14 @@ static Interpreter* new(void)
   inter->evaluated = NULL;
   BindSF(inter->meta, inter->top_env);
   BindPF(inter->meta, inter->top_env);
+  MetaObject.referred(inter->top_env);
 }
 
 static void eval(Interpreter* inter, const char code[])
 {
-  Generator g = {inter->meta, Cell.new, Symbol.new, Exception.new};
+  Generator g = {inter->meta, Cell.new, Util.singletonSymbol, Exception.new};
   Object* exp = Parse(code, &g);
-  Object* cont = Continuation.new(inter->meta);
+  Object* cont = Continuation.new(inter->meta, NULL);
   Object* form = Form.new(inter->meta, inter->env, exp, Util.length(exp), false);
 
   MetaObject.release(exp);

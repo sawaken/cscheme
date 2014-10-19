@@ -134,15 +134,17 @@ static void release(Object* obj)
     c->apply(obj, unreferred);
   }
 
+  Object* meta_obj = obj->meta_obj;
+  int meta_obj_pos = obj->meta_obj_pos;
+
   if (c->release == NULL || c->release(obj)) {
     free(obj->data);
     free(obj);
   }
-  
-  pull(obj->meta_obj)->objects[obj->meta_obj_pos] = NULL;
-  pull(obj->meta_obj)->size--;
 
-  free(pull(obj->meta_obj)->gc_infos[obj->meta_obj_pos]);
+  free(pull(meta_obj)->gc_infos[meta_obj_pos]);  
+  pull(meta_obj)->objects[meta_obj_pos] = NULL;
+  pull(meta_obj)->size--;
 }
 
 static int sweep(Object* obj)

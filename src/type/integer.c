@@ -22,7 +22,15 @@ static int to_i(Object* obj)
   return pull(obj)->i;
 }
 
+static Object* sum(Object* meta, Object** ints, int len)
+{
+  int sum = 0;
+  for (int i = 0; i < len; i++)
+    sum += pull(ints[i])->i;
+  return new(meta, sum);
+}
+
 t_Integer Integer = {
   {NULL, NULL, NULL, NULL},
-  new, to_i
+  new, to_i, sum
 };

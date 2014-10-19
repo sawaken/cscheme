@@ -21,6 +21,7 @@ typedef struct
   void (*listToArray)(Object* list, Object* array[]);
   Object* (*ith)(Object* list, int i);
   Object* (*parseParam)(Object* meta, Object* param_list, const char* dot);
+  bool (*isAll)(Object** args, int argc, void* type);
 } t_Util;
 extern t_Util Util;
 

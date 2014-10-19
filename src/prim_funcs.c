@@ -1,12 +1,12 @@
 #include "type/type.h"
 #include "util.h"
 
-#define def(name) (static Object* (name)(Object* meta, Object** args, int argc))
+#define def(name) static Object* (name)(Object* meta, Object** args, int argc)
 #define EX(message) Exception.new(meta, String.new(meta, (message)))
 
 def(sum_int)
 {
-  if (!Util.all(args, argc, &Integer)) {
+  if (!Util.isAll(args, argc, &Integer)) {
     return EX("all args should be integer.");
   } else {
     return Integer.sum(meta, args, argc);

@@ -63,6 +63,7 @@ typedef struct
   Controller con;
   Object* (*New)(Object* meta, int i);
   int (*to_i)(Object* integer);
+  Object* (*sum)(Object* meta, Object** ints, int len);
 } t_Integer;
 extern t_Integer Integer;
 

@@ -174,7 +174,15 @@ static Object* parseParam(Object* meta, Object* param_list, const char* dot)
   return Parameter.new(meta, param_array, len, rest);
 }
 
+static bool isAll(Object** args, int argc, void* type)
+{
+  for (int i = 0; i < argc; i++)
+    if (!IsA(args[i], type))
+      return false;
+  return true;
+}
+
 t_Util Util = {
   list, symList, length, isList, form, arrayToList, assign, comp, singletonSymbol,
-  include, listDup, listToArray, ith, parseParam
+  include, listDup, listToArray, ith, parseParam, isAll
 };
