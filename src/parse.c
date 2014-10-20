@@ -92,7 +92,7 @@ static Object* iParseExp(const char exp[], Generator* gen, int begin, int end, P
 
     else
       return gen->cons(gen->meta_obj, Quoten(StringParse(exp, gen, begin, str_end_pos),
-					     gen, PMODE_SINGLE),
+					     gen, PMODE_NONE),
 		       iParseExp(exp, gen, str_end_pos + 1, end, PMODE_NONE));
   }
 
