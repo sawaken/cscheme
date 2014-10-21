@@ -59,8 +59,14 @@ static void release(Interpreter* inter)
   free(inter);
 }
 
+static char* showLastEvaluated(Interpreter * inter, char* buf)
+{
+  return Util.toStr(getEvaluated(inter), buf);
+}
+
+
 t_Cscheme Cscheme = {
-  new, eval, ret, getEvaluated, release
+  new, eval, ret, getEvaluated, release, showLastEvaluated
 };
   
 

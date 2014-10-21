@@ -1,3 +1,5 @@
+#include "type/type.h"
+
 #ifndef CSCHEME_H
 #define CSCHEME_H
 
@@ -15,6 +17,7 @@ typedef struct
   void (*ret)(Interpreter* inter, Object* evaluated);
   Object* (*getEvaluated)(Interpreter* inter);
   void (*release)(Interpreter* inter);
+  char* (*showLastEvaluated)(Interpreter * inter, char* buf);
 } t_Cscheme;
 extern t_Cscheme Cscheme;
 
