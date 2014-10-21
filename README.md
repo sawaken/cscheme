@@ -4,9 +4,9 @@ Clean Scheme
 Standard Scheme interpreter written in C-language focusing on Simpleness and Cleanness of Implimentation.
 
 
-Spec
-----
-Heading for implimenting specifications on R5RS.
+Specifications
+--------------
+Implimentation is heading for meeting all of specifications on R5RS.
 
 
 Release
