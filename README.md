@@ -1,12 +1,11 @@
 Clean Scheme
 ============
-
-Standard Scheme interpreter written in C-language focusing on Simpleness and Cleanness of Implimentation.
+Standard Scheme interpreter written in C-language focusing on Simpleness and Cleanness of Implementation.
 
 
 Specifications
 --------------
-Implimentation is heading for meeting all of specifications on R5RS.
+This Scheme implementation is aiming for meeting all of specifications on R5RS.
 
 
 Release
