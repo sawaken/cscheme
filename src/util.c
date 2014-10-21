@@ -153,6 +153,14 @@ static Object* ith(Object* list, int i)
 
 static Object* parseParam(Object* meta, Object* param_list, const char* dot)
 {
+  if (IsA(param_list, &Symbol)) {
+    return Parameter.new(meta, NULL, 0, param_list);
+  }
+
+  if (!IsA(param_list, &Cell)) {
+    return NULL;
+  }
+
   int len = length(param_list);
   if (listDup(param_list) || len > 100)
     return NULL;

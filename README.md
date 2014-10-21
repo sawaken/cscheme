@@ -5,7 +5,7 @@ Standard Scheme interpreter written in C-language focusing on Simpleness and Cle
 
 Specifications
 --------------
-This Scheme implementation is aiming for meeting all of specifications on R5RS.
+This Scheme implementation is aiming for meeting all of the specifications on R5RS.
 
 
 Release
