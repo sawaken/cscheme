@@ -11,7 +11,7 @@ Heading for implimenting specifications on R5RS.
 
 Release
 -------
-* There are NOT any release yet. *
+* There are not any release yet.
 
 But, possibly you can compile and try to run interpreter under development in the following way.
 
