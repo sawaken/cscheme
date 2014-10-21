@@ -14,10 +14,10 @@ Release
 * There are NOT any release yet. *
 
 But, possibly you can compile and try to run interpreter under development in the following way.
-  $ git clone https://github.com/sawaken/cscheme.git
-  $ cd cscheme
-  $ rake        # Sorry, Makefile is in preparation. Only Rakefile is now available.
-  $ ./cscheme   # run REPL
+    $ git clone https://github.com/sawaken/cscheme.git
+    $ cd cscheme
+    $ rake        # Sorry, Makefile is in preparation. Only Rakefile is now available.
+    $ ./cscheme   # run REPL
 
 
 
