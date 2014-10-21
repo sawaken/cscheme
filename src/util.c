@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "type/type.h"
 #include "util.h"
@@ -182,7 +183,27 @@ static bool isAll(Object** args, int argc, void* type)
   return true;
 }
 
+
+// temporary implimentation
+static char* toStr(Object* obj, char buf[])
+{
+  if (IsA(obj, &Integer)) {
+    snprintf(buf, 100, "%d", Integer.to_i(obj));
+  } else if (IsA(obj, &Symbol)) {
+    snprintf(buf, 100, "<#symbol: %s>", Symbol.to_s(obj));
+  } else if (IsA(obj, &String)) {
+    snprintf(buf, 100, "<#string: %s>", String.to_s(obj));
+  } else if (IsA(obj, &Exception)) {
+    snprintf(buf, 100, "<#exception: %s>", String.to_s(Exception.take(obj)));
+  } else {
+    snprintf(buf, 100, "<#object>");
+  }
+
+  return buf;
+}
+
+
 t_Util Util = {
   list, symList, length, isList, form, arrayToList, assign, comp, singletonSymbol,
-  include, listDup, listToArray, ith, parseParam, isAll
+  include, listDup, listToArray, ith, parseParam, isAll, toStr
 };

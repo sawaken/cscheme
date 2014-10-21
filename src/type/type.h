@@ -222,7 +222,6 @@ extern "C" {
 
   bool IsA(Object* obj, void* type);
   Controller* Con(Object* obj);
-  char* ToStr(Object* obj, char buf[]);
 
 #ifdef __cplusplus
 }

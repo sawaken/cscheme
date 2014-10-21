@@ -5,7 +5,7 @@
 #include "parse.h"
 #include "eval.h"
 #include "util.h"
-#include "pcheme.h"
+#include "cscheme.h"
 
 static Interpreter* new(void)
 {
@@ -41,7 +41,7 @@ static void eval(Interpreter* inter, const char code[])
   Continuation.push(cont, form);
   
   Object* evaluated = Eval(inter->meta, cont);
-  Pcheme.ret(inter, evaluated);
+  ret(inter, evaluated);
   MetaObject.release(cont);
 }
 
@@ -59,7 +59,7 @@ static void release(Interpreter* inter)
   free(inter);
 }
 
-t_Pcheme Pcheme = {
+t_Cscheme Cscheme = {
   new, eval, ret, getEvaluated, release
 };
   

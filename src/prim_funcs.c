@@ -19,7 +19,7 @@ def(display)
 {
   for (int i = 0; i < argc; i++) {
     char buf[100];
-    printf("%s\n", ToStr(args[i], buf));
+    printf("%s\n", Util.toStr(args[i], buf));
   } 
   return args[argc - 1];
 }

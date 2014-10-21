@@ -30,10 +30,10 @@ TESTS = {
                    *TYPES.map{|t| "../src/type/#{t}.o"},
                   ],
 
-  "test_pcheme" => ["test_pcheme.o",
+  "test_cscheme" => ["test_cscheme.o",
                     "../src/special_forms.o",
                     "../src/prim_funcs.o",
-                    "../src/pcheme.o",
+                    "../src/cscheme.o",
                     "../src/eval.o",
                     "../src/parse.o",
                     "../src/parse_util.o",
@@ -43,14 +43,8 @@ TESTS = {
 
   "test_util" => ["test_util.o",
                   "../src/util.o",
-                  "../src/type/meta_object.o",
-                  "../src/type/cell.o",
-                  "../src/type/symbol.o",
-                  "../src/type/integer.o",
-                  "../src/type/form.o",
-                  "../src/type/parameter.o",
-                  "../src/type/env.o",
-                  "../src/type/type.o"],
+                    *TYPES.map{|t| "../src/type/#{t}.o"},
+                 ],
 
   "test_special_forms" => ["test_special_forms.o",
                            "../src/special_forms.o",
@@ -99,14 +93,8 @@ TESTS = {
 
   "type/test_form" => ["type/test_form.o",
                        "../src/util.o",
-                       "../src/type/meta_object.o",
-                       "../src/type/symbol.o",
-                       "../src/type/form.o",
-                       "../src/type/cell.o",
-                       "../src/type/env.o",	
-                       "../src/type/parameter.o",	
-                       "../src/type/dummy.o",
-                       "../src/type/type.o"],
+                        *TYPES.map{|t| "../src/type/#{t}.o"},
+                      ],
 
   "type/test_continuation" => ["type/test_continuation.o",
                                "../src/type/meta_object.o",
@@ -178,6 +166,7 @@ end
 TESTS.each do |key, val|
   desc "run #{key} test"
   file key => [val, LIB].flatten do |t|
+    puts "---- #{key} ----"
     sh "#{CPP_COMPILER} -g -pthread -o #{t.name}.out #{t.prerequisites.join(' ')}"
     sh "./#{t.name}.out"
   end

@@ -1,4 +1,5 @@
-pcheme
-======
+Clean Scheme
+============
 
-[Not yet released] My new Scheme interpreter by C.
+
+

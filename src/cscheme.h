@@ -1,5 +1,5 @@
-#ifndef PCHEME_H
-#define PCHEME_H
+#ifndef CSCHEME_H
+#define CSCHEME_H
 
 typedef struct
 {
@@ -15,7 +15,7 @@ typedef struct
   void (*ret)(Interpreter* inter, Object* evaluated);
   Object* (*getEvaluated)(Interpreter* inter);
   void (*release)(Interpreter* inter);
-} t_Pcheme;
-extern t_Pcheme Pcheme;
+} t_Cscheme;
+extern t_Cscheme Cscheme;
 
 #endif

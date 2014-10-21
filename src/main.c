@@ -1,24 +1,25 @@
 #include <stdio.h>
 #include "type/type.h"
-#include "pcheme.h"
+#include "util.h"
+#include "cscheme.h"
 
 #define REPL_MODE 1
 
 int main(void)
 {
-  Interpreter* inter = Pcheme.new();
+  Interpreter* inter = Cscheme.new();
 
   if (REPL_MODE) {
     
     char buf[1000];
 
-    while (printf("pcheme> ") && fgets(buf, 1000, stdin) != NULL) {
-      Pcheme.eval(inter, buf);
-      printf("%s\n", ToStr(Pcheme.getEvaluated(inter), buf)); // temporary solution
+    while (printf("cscheme> ") && fgets(buf, 1000, stdin) != NULL) {
+      Cscheme.eval(inter, buf);
+      printf("%s\n", Util.toStr(Cscheme.getEvaluated(inter), buf)); // temporary solution
     }
   }
 
-  Pcheme.release(inter);
+  Cscheme.release(inter);
 
   return 0;
 }

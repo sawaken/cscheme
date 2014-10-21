@@ -22,6 +22,7 @@ typedef struct
   Object* (*ith)(Object* list, int i);
   Object* (*parseParam)(Object* meta, Object* param_list, const char* dot);
   bool (*isAll)(Object** args, int argc, void* type);
+  char* (*toStr)(Object* obj, char buf[]);
 } t_Util;
 extern t_Util Util;
 
