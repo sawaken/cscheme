@@ -8,7 +8,7 @@
 typedef struct
 {
   Object* (*list)(Object* meta, int length, ...);
-  Object* (*symList)(Generator* g, int length, ...);
+  Object* (*symList)(Object* meta, Object* (*getSymbol)(Object*, const char*), int length, ...);
   int (*length)(Object* obj);
   bool (*isList)(Object* obj);
   Object* (*form)(Object* meta, Object* env, bool body, int length, ...);

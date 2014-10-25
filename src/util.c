@@ -23,22 +23,22 @@ static Object* list(Object* meta, int length, ...)
   return i_list(meta, length, ap);
 }
 
-static Object* i_symList(Generator* g, int length, va_list ap)
+static Object* i_symList(Object* meta, Object* (*getSymbol)(Object*, const char*), int length, va_list ap)
 {
   if (length > 0) {
-    Object* a = g->symbol(g->meta_obj, va_arg(ap, char*));
-    return g->cons(g->meta_obj, a, i_symList(g, length - 1, ap));
+    Object* a = getSymbol(meta, va_arg(ap, char*));
+    return Cell.new(meta, a, i_symList(meta, getSymbol, length - 1, ap));
   }
   else {
-    return g->cons(g->meta_obj, NULL, NULL);
+    return Cell.new(meta, NULL, NULL);
   } 
 }
 
-static Object* symList(Generator* g, int length, ...)
+static Object* symList(Object* meta, Object* (*getSymbol)(Object*, const char*), int length, ...)
 {
   va_list ap;
   va_start(ap, length);
-  return i_symList(g, length, ap);
+  return i_symList(meta, getSymbol, length, ap);
 }
 
 static int length(Object* obj)

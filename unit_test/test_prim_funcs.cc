@@ -8,7 +8,6 @@
 class PFTest : public ::testing::Test {
 protected:
   
-  Generator g;
   Object *meta, *env, *cont;
   Object *dummy1, *dummy2, *dummy3, *dummy4;
 
@@ -20,8 +19,7 @@ protected:
     dummy2 = Dummy.New(meta, NULL);
     dummy3 = Dummy.New(meta, NULL);
     dummy4 = Dummy.New(meta, NULL);
-    g = (Generator){meta, Cell.New, Util.singletonSymbol, NULL};
-    BindPF(&g, env);
+    BindPF(meta, Util.singletonSymbol, env);
     MetaObject.referred(env);
   }
 };

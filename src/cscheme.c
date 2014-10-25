@@ -14,9 +14,8 @@ static Interpreter* new(void)
   inter->top_env = Env.new(inter->meta, NULL);
   inter->evaluated = NULL;
 
-  Generator g = {inter->meta, Cell.new, Util.singletonSymbol, NULL};
-  BindSF(&g, inter->top_env);
-  BindPF(&g, inter->top_env);
+  BindSF(inter->meta, Util.singletonSymbol, inter->top_env);
+  BindPF(inter->meta, Util.singletonSymbol, inter->top_env);
   MetaObject.referred(inter->top_env);
 
   return inter;

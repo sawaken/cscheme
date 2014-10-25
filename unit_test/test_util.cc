@@ -28,8 +28,7 @@ TEST(New, case1)
 TEST(symList, case1)
 {
   Object* meta = MetaObject.New(10);
-  Generator g = {meta, Cell.New, Symbol.New, NULL};
-  Object* ls = Util.symList(&g, 2, "hoge", "fuga");
+  Object* ls = Util.symList(meta, Util.singletonSymbol, 2, "hoge", "fuga");
 
   ASSERT_FALSE(Cell.empty(ls));
   ASSERT_STREQ("hoge", GS(car(ls)));

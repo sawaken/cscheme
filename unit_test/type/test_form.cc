@@ -1,12 +1,10 @@
 #include <gtest/gtest.h>
 #include <type/type.h>
-#include <util.h>
 #include <iostream>
 
 class UseTest : public ::testing::Test {
 protected:
 
-  Generator g;
   Object *meta, *exp, *form;
   Object *a, *b, *c, *x, *y, *z, *env;
   
@@ -19,7 +17,7 @@ protected:
     y = Dummy.New(meta, NULL);
     z = Dummy.New(meta, NULL);
     env = Dummy.New(meta, NULL);
-    exp  = Util.list(meta, 3, a, b, c);
+    exp = Cell.New(meta, a, Cell.New(meta, b, Cell.New(meta, c, NULL)));
     form = Form.New(meta, env, exp, 3, true);
   }
 };

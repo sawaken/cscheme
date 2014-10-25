@@ -7,14 +7,12 @@
 class UseTest : public ::testing::Test {
 protected:
 
-  Generator g;
   Object *meta;
   Object *dummy1, *dummy2, *dummy3;
   Object *dummyA, *dummyB, *dummyC;
 
   virtual void SetUp() {
     meta = MetaObject.New(100);
-    g = (Generator){meta, Cell.New, NULL, NULL};
     dummy1 = D.New(meta, NULL);
     dummy2 = D.New(meta, NULL);
     dummy3 = D.New(meta, NULL);
@@ -24,13 +22,9 @@ protected:
   }
 };
 
-Object* makeForm(Generator* g, Object* e, Object* a, Object* b)
+Object* makeForm(Object* meta, Object* e, Object* a, Object* b)
 {
-  Object* m = g->meta_obj;
-  Object* exp = g->cons(m, a,
-			g->cons(m, b,
-				g->cons(m, NULL, NULL)));
-  return Form.New(m, e, exp, 2, false);
+  return Form.New(meta, e, Cell.New(meta, a, Cell.New(meta, b, NULL)), 2, false);
 }
 
 TEST_F(UseTest, top_size_at_erase_pop_push)
@@ -92,7 +86,7 @@ TEST_F(UseTest, returnTopToForm)
 {
   Object* cont = C.New(meta, NULL);
 
-  C.push(cont, makeForm(&g, dummyA, dummy1, dummy2));
+  C.push(cont, makeForm(meta, dummyA, dummy1, dummy2));
   C.push(cont, dummy1);
   C.returnTopToForm(cont);
 

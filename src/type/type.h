@@ -20,14 +20,6 @@ struct Object
 
 typedef struct
 {
-  Object* meta_obj;
-  Object* (*cons)(Object*, Object*, Object*);
-  Object* (*symbol)(Object*, const char[]);
-  Object* (*exception)(Object*, const char*);
-} Generator;
-
-typedef struct
-{
   bool (*release)(Object* obj);
   void (*apply)(Object* obj, void (*proc)(Object*));
   void (*onReferred)(Object* obj);
@@ -87,6 +79,7 @@ typedef struct
 		 int length, bool body);
   int (*pos)(Object* form);
   int (*restNum)(Object* form);
+  int (*size)(Object* form);
   Object* (*env)(Object* form);
   Object* (*next)(Object* form);
   Object* (*evaluatedElement)(Object* form, int position);

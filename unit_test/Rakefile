@@ -92,9 +92,12 @@ TESTS = {
                        "../src/type/type.o"],
 
   "type/test_form" => ["type/test_form.o",
-                       "../src/util.o",
-                        *TYPES.map{|t| "../src/type/#{t}.o"},
-                      ],
+                       "../src/type/meta_object.o",
+                       "../src/type/form.o",
+                       "../src/type/symbol.o",
+                       "../src/type/cell.o",
+                       "../src/type/dummy.o",
+                       "../src/type/type.o"],
 
   "type/test_continuation" => ["type/test_continuation.o",
                                "../src/type/meta_object.o",

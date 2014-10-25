@@ -4,16 +4,12 @@
 #include "eval.h"
 #include "util.h"
 
-static int arglen(Object* form)
-{
-  return Form.pos(form) + Form.restNum(form) - 1;
-}
 
 static bool _if(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
   
-  if (arglen(form) != 3) {
+  if (Form.size(form) != 4) {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
     return true;
   }
@@ -36,7 +32,7 @@ static bool call_cc(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
 
-  if (arglen(form) != 1) {
+  if (Form.size(form) != 2) {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
     return true;
   }
@@ -57,7 +53,7 @@ static bool lambda(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
 
-  if (arglen(form) < 2) {
+  if (Form.size(form) < 3) {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
     return true;
   }
@@ -69,7 +65,7 @@ static bool lambda(Object* meta, Object* cont)
   } else {
     Continuation.popAndPush(cont, Lambda.new(meta, Form.env(form), param,
 					     Form.rawElements(form, 2), 
-					     arglen(form) - 1));
+					     Form.size(form) - 2));
   }
   return true;
 }
@@ -79,7 +75,7 @@ static bool define(Object* meta, Object* cont)
 {
   Object* form = Continuation.top(cont);
 
-  if (arglen(form) != 2) {
+  if (Form.size(form) != 3) {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
     return true;
   }
@@ -105,35 +101,15 @@ static bool define(Object* meta, Object* cont)
   }
 }
 
-// original function
-static bool meta_info(Object* meta, Object* cont)
+
+#define BIND(meta, getSymbol, env, func, name) Env.bind((env), (getSymbol)((meta), name), \
+							SpecialForm.new((meta), (name), (func)))
+
+void BindSF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env)
 {
-  Object* form = Continuation.top(cont);
-
-  if (arglen(form) != 0) {
-    Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid arglen.")));
-    return true;
-  }
-
-  char buf[100];
-  snprintf(buf, sizeof(buf), "[meta: size = %d, pos = %d]",
-	   MetaObject.size(meta), MetaObject.pos(meta));
-
-  Continuation.popAndPush(cont, String.new(meta, buf));
-  return true;
+  BIND(meta, getSymbol, env, _if,       "if");
+  BIND(meta, getSymbol, env, call_cc,   "call/cc");
+  BIND(meta, getSymbol, env, lambda,    "lambda");
+  BIND(meta, getSymbol, env, define,    "define");
 }
 
-
-void BindSF(Generator* g, Object* env)
-{
-  Env.bind(env, g->symbol(g->meta_obj, "if"), 
-	   SpecialForm.new(g->meta_obj, "if", _if));
-  Env.bind(env, g->symbol(g->meta_obj, "call/cc"),
-	   SpecialForm.new(g->meta_obj, "call/cc", call_cc));
-  Env.bind(env, g->symbol(g->meta_obj, "lambda"),
-	   SpecialForm.new(g->meta_obj, "lambda", lambda));
-  Env.bind(env, g->symbol(g->meta_obj, "define"),
-	   SpecialForm.new(g->meta_obj, "define", define));
-  Env.bind(env, g->symbol(g->meta_obj, "meta-info"),
-	   SpecialForm.new(g->meta_obj, "meta-info", meta_info));
-}

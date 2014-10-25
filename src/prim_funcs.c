@@ -24,10 +24,26 @@ def(display)
   return args[argc - 1];
 }
 
-void BindPF(Generator* g, Object* env)
+def(meta_info)
 {
-  Env.bind(env, g->symbol(g->meta_obj, "+"),
-	   PrimFunc.new(g->meta_obj, "+", sum_int));
-  Env.bind(env, g->symbol(g->meta_obj, "display"),
-	   PrimFunc.new(g->meta_obj, "display", display));
+  if (argc != 0) {
+    return EX("invalid args.");
+  }
+
+  char buf[100];
+  snprintf(buf, sizeof(buf), "[meta: size = %d, pos = %d]",
+	   MetaObject.size(meta), MetaObject.pos(meta));
+
+  return String.new(meta, buf);
+}
+
+
+#define BIND(meta, getSymbol, env, func, name) Env.bind((env), (getSymbol)((meta), name), \
+							PrimFunc.new((meta), (name), (func)))
+
+void BindPF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env)
+{
+  BIND(meta, getSymbol, env, sum_int, "+");
+  BIND(meta, getSymbol, env, display, "display");
+  BIND(meta, getSymbol, env, meta_info, "meta-info");
 }

@@ -8,7 +8,6 @@
 class SFTest : public ::testing::Test {
 protected:
   
-  Generator g;
   Object *meta, *env, *cont;
   Object *dummy1, *dummy2, *dummy3, *dummy4;
 
@@ -20,8 +19,7 @@ protected:
     dummy2 = Dummy.New(meta, NULL);
     dummy3 = Dummy.New(meta, NULL);
     dummy4 = Dummy.New(meta, NULL);
-    g = (Generator){meta, Cell.New, Util.singletonSymbol, NULL};
-    BindSF(&g, env);
+    BindSF(meta, Util.singletonSymbol, env);
     MetaObject.referred(env);
   }
 };
@@ -29,6 +27,7 @@ protected:
 TEST_F(SFTest, _if_with_3arg_true)
 {
   Object* _if = Env.find(env, Util.singletonSymbol(meta, "if"), Util.comp);
+  ASSERT_TRUE(_if != NULL);
 
   C.push(cont, Util.form(meta, env, false, 4, dummy1, dummy2, dummy3, dummy4));
 
@@ -47,6 +46,7 @@ TEST_F(SFTest, _if_with_3arg_true)
 TEST_F(SFTest, _if_with_3arg_false)
 {
   Object* _if = Env.find(env, Util.singletonSymbol(meta, "if"), Util.comp);
+  ASSERT_TRUE(_if != NULL);
 
   C.push(cont, Util.form(meta, env, false, 4, dummy1, dummy2, dummy3, dummy4));
 
@@ -65,6 +65,7 @@ TEST_F(SFTest, _if_with_3arg_false)
 TEST_F(SFTest, call_cc)
 {
   Object* call_cc = Env.find(env, Util.singletonSymbol(meta, "call/cc"), Util.comp);
+  ASSERT_TRUE(call_cc != NULL);
 
   C.push(cont, dummy1);
   C.push(cont, Util.form(meta, env, false, 2, dummy2, dummy3));
@@ -89,8 +90,9 @@ TEST_F(SFTest, call_cc)
 TEST_F(SFTest, lambda)
 {
   Object* lambda = Env.find(env, Util.singletonSymbol(meta, "lambda"), Util.comp);
+  ASSERT_TRUE(lambda != NULL);
 
-  Object* param_list = Util.symList(&g, 4, "a", "b", ".", "c");
+  Object* param_list = Util.symList(meta, Util.singletonSymbol, 4, "a", "b", ".", "c");
   C.push(cont, Util.form(meta, env, false, 4, dummy1, param_list, dummy2, dummy3));
 
   C.push(cont, lambda);

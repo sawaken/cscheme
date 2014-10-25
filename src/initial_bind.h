@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-  void BindSF(Generator* g, Object* env);
-  void BindPF(Generator* g, Object* env);
+  void BindSF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env);
+  void BindPF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env);
 
 #ifdef __cplusplus
 }

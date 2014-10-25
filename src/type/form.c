@@ -69,6 +69,11 @@ static int restNum(Object* form)
   return pull(form)->size - pull(form)->pos;
 }
 
+static int size(Object* form)
+{
+  return pull(form)->size;
+}
+
 static Object* env(Object* form)
 {
   return pull(form)->env;
@@ -119,7 +124,7 @@ static bool isBody(Object* form)
 
 t_Form Form = {
   {release, apply, NULL, NULL},
-  new, pos, restNum, env, next,
+  new, pos, restNum, size, env, next,
   evaluatedElement, rawElement, evaluatedElements, rawElements,
   back, isBody
 };
