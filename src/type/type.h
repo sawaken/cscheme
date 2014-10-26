@@ -211,13 +211,11 @@ extern CSCM_Character_T    CSCM_Character;
 extern CSCM_Dummy_T        CSCM_Dummy;
 
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
   bool IsA(Object* obj, void* type);
-  Controller* Con(Object* obj);
 
 #ifdef __cplusplus
 }

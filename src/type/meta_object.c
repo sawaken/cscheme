@@ -24,6 +24,10 @@ typedef struct
   GCInfo** gc_infos;
 } Data;
 
+static Controller* Con(Object* obj)
+{
+  return (Controller*)(obj->type);
+}
 
 static GCInfo* gc_info(Object* obj)
 {
