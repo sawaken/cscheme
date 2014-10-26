@@ -8,7 +8,7 @@ LIB = ["libgtest.a", "libgtest_main.a"]
 
 TYPES = [:bool, :cell, :character, :continuation, :dummy, :env, :exception, :form,
          :integer, :lambda, :meta_object, :parameter, :prim_func, :special_form,
-         :string, :symbol] + [:type]
+         :string, :symbol]
 
 
 # test targets
@@ -64,32 +64,32 @@ TESTS = {
                           "../src/type/meta_object.o",
                           "../src/type/integer.o",
                           "../src/type/symbol.o",
-                          "../src/type/type.o"],
+                          ],
 
   "type/test_symbol" => ["type/test_symbol.o",
                          "../src/type/meta_object.o",
                          "../src/type/symbol.o",
-                         "../src/type/type.o"],
+                        ],
 
   "type/test_string" => ["type/test_string.o",
                          "../src/type/meta_object.o",
                          "../src/type/symbol.o",
                          "../src/type/string.o",
-                         "../src/type/type.o"],
+                         ],
 
   "type/test_exception" => ["type/test_exception.o",
                             "../src/type/meta_object.o",
                             "../src/type/symbol.o",
                             "../src/type/exception.o",
                             "../src/type/dummy.o",
-                            "../src/type/type.o"],
+                           ],
 
   "type/test_cell" => ["type/test_cell.o",
                        "../src/type/meta_object.o",
                        "../src/type/symbol.o",
                        "../src/type/cell.o",
                        "../src/type/dummy.o",
-                       "../src/type/type.o"],
+                      ],
 
   "type/test_form" => ["type/test_form.o",
                        "../src/type/meta_object.o",
@@ -97,7 +97,7 @@ TESTS = {
                        "../src/type/symbol.o",
                        "../src/type/cell.o",
                        "../src/type/dummy.o",
-                       "../src/type/type.o"],
+                      ],
 
   "type/test_continuation" => ["type/test_continuation.o",
                                "../src/type/meta_object.o",
@@ -106,28 +106,28 @@ TESTS = {
                                "../src/type/form.o",
                                "../src/type/cell.o",
                                "../src/type/dummy.o",
-                               "../src/type/type.o"],
+                              ],
 
   "type/test_lambda" => ["type/test_lambda.o",
                          "../src/type/meta_object.o",
                          "../src/type/symbol.o",
                          "../src/type/lambda.o",
                          "../src/type/dummy.o",
-                         "../src/type/type.o"],
+                        ],
 
   "type/test_env" => ["type/test_env.o",
                       "../src/type/meta_object.o",
                       "../src/type/symbol.o",
                       "../src/type/env.o",
                       "../src/type/dummy.o",
-                      "../src/type/type.o"],
+                     ],
 
   "type/test_parameter" => ["type/test_parameter.o",
                             "../src/type/meta_object.o",
                             "../src/type/symbol.o",
                             "../src/type/parameter.o",
                             "../src/type/dummy.o",
-                            "../src/type/type.o"],
+                           ],
 }
 
 task :all => ["clean", *TESTS.keys]

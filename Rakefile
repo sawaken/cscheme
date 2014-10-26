@@ -5,7 +5,7 @@ SRC_DIR = "./src"
 
 TYPES = [:bool, :cell, :character, :continuation, :dummy, :env, :exception, :form,
          :integer, :lambda, :meta_object, :parameter, :prim_func, :special_form,
-         :string, :symbol] + [:type]
+         :string, :symbol]
 
 SRCS = [:main, :special_forms, :prim_funcs, :cscheme, :eval, :parse, :parse_util, :util]
 
