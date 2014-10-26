@@ -3,11 +3,6 @@
 #ifndef TYPE_H
 #define TYPE_H
 
-#ifndef __cplusplus
-#define new New
-#endif
-
-
 typedef struct Object Object;
 struct Object
 {

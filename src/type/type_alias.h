@@ -14,3 +14,7 @@
 #define Bool         CSCM_Bool
 #define Character    CSCM_Character
 #define Dummy        CSCM_Dummy
+
+#ifndef __cplusplus
+#define new New
+#endif
