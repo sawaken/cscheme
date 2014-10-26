@@ -19,13 +19,13 @@ static Object* new(Object* meta, bool b)
 }
 
 static bool to_b(Object* b)
- {
+{
    return PULL(b)->b;
- }
+}
 
 static Object* select(Object* b, Object* obj1, Object* obj2)
 {
-  if (IsA(b, Type) && !to_b(b)) return obj2;
+  if (b->type == &CSCM_Bool && !to_b(b)) return obj2;
   return obj1;
 }
 

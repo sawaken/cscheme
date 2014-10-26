@@ -104,8 +104,9 @@ static void trans(Object* cont, Object* alt_cont, Object* obj)
 
 static void returnTopToForm(Object* cont)
 {
-  assert(IsA(at(cont, size(cont) - 2), &CSCM_Form));
-  CSCM_Form.back(at(cont, size(cont) - 2), top(cont));
+  Object* form = at(cont, size(cont) - 2);
+  assert(form->type == &CSCM_Form);
+  CSCM_Form.back(form, top(cont));
   pop(cont);
 }
   

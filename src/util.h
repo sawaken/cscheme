@@ -7,6 +7,7 @@
 
 typedef struct
 {
+  bool (*isA)(Object* obj, void* type);
   Object* (*list)(Object* meta, int length, ...);
   Object* (*symList)(Object* meta, Object* (*getSymbol)(Object*, const char*), int length, ...);
   int (*length)(Object* obj);

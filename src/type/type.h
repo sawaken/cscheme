@@ -18,11 +18,11 @@ typedef struct
   void (*apply)(Object* obj, void (*proc)(Object*));
   void (*onReferred)(Object* obj);
   void (*onUnreferred)(Object* obj);
-} Controller;
+} CSCM_Controller;
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(int init_max_size);
   Object* (*gen)(Object* meta, void* type, void* data);
   int (*size)(Object* meta);
@@ -39,7 +39,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, const char name[]);
   Object* (*newWithRange)(Object* meta, const char str[], int s, int t);
   char* (*to_s)(Object* symbol);
@@ -47,7 +47,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, int i);
   int (*to_i)(Object* integer);
   Object* (*sum)(Object* meta, Object** ints, int len);
@@ -55,7 +55,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, Object* car, Object* cdr);
   Object* (*car)(Object* cell);
   Object* (*cdr)(Object* cell);
@@ -64,7 +64,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* mata, Object* env, Object* exp,
 		 int length, bool body);
   int (*pos)(Object* form);
@@ -82,7 +82,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, Object* init_cont);
   Object* (*top)(Object* cont);
   int (*size)(Object* cont);
@@ -98,7 +98,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, const char* name,
 		 bool (*action)(Object* meta, Object* cont));
   bool (*doAction)(Object* sf, Object* meta, Object* cont);
@@ -106,7 +106,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, Object* env, Object* param,
 		 Object* const exps[], int length);
   Object* (*env)(Object* lambda);
@@ -117,7 +117,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, Object* parent);
   int (*size)(Object* env);
   void (*bind)(Object* env, Object* key, Object* value);
@@ -127,14 +127,14 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, Object* raised_obj);
   Object* (*take)(Object* exception);
 } CSCM_Exception_T;
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, const char str[]);
   Object* (*newWithRange)(Object* meta, const char str[], int s, int t);
   char* (*to_s)(Object* string);
@@ -142,7 +142,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, Object* const params[],
 		 int paramc, Object* rest);
   int (*paramc)(Object* param);
@@ -154,7 +154,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, const char name[],
 		 Object* (*func)(Object*, Object**, int));
   Object* (*apply)(Object* pf, Object* meta,
@@ -163,7 +163,7 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, bool b);
   bool (*to_b)(Object* b);
   Object* (*select)(Object* b, Object* obj1, Object* obj2);
@@ -171,14 +171,14 @@ typedef struct
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, char c);
   char (*to_c)(Object* character);
 } CSCM_Character_T;
 
 typedef struct
 {
-  Controller con;
+  CSCM_Controller con;
   Object* (*New)(Object* meta, Object* ref);
   Object* (*ref)(Object* dummy);
   bool (*isReleased)(Object* dummy);
@@ -204,15 +204,5 @@ extern CSCM_Bool_T         CSCM_Bool;
 extern CSCM_Character_T    CSCM_Character;
 extern CSCM_Dummy_T        CSCM_Dummy;
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-  bool IsA(Object* obj, void* type);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

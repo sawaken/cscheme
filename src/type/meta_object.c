@@ -25,9 +25,9 @@ typedef struct
   GCInfo** gc_infos;
 } Data;
 
-static Controller* Con(Object* obj)
+static CSCM_Controller* Con(Object* obj)
 {
-  return (Controller*)(obj->type);
+  return (CSCM_Controller*)(obj->type);
 }
 
 static GCInfo* gc_info(Object* obj)
@@ -116,7 +116,7 @@ static int pos(Object* meta)
 
 static void referred(Object* obj)
 {
-  Controller* c = Con(obj);
+  CSCM_Controller* c = Con(obj);
 
   if (c->onReferred != NULL) {
     c->onReferred(obj);
@@ -127,7 +127,7 @@ static void referred(Object* obj)
 
 static void unreferred(Object* obj)
 {
-  Controller* c = Con(obj);
+  CSCM_Controller* c = Con(obj);
 
   if (c->onUnreferred != NULL) {
     c->onUnreferred(obj);
@@ -142,7 +142,7 @@ static void unreferred(Object* obj)
 
 static void release(Object* obj)
 {
-  Controller* c = Con(obj);
+  CSCM_Controller* c = Con(obj);
   
   if (gc_info(obj)->death_flag)
     return;
@@ -179,7 +179,7 @@ static Object* findSymbol(Object* meta, const char* name,
 
   for (int i = 0; i < PULL(meta)->pos; i++) {
     if (os[i] == NULL) continue;
-    if (IsA(os[i], &CSCM_Symbol) && strcmp(name, CSCM_Symbol.to_s(os[i])) == 0)
+    if (os[i]->type == &CSCM_Symbol && strcmp(name, CSCM_Symbol.to_s(os[i])) == 0)
       return os[i];
   }
   return NULL;

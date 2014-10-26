@@ -15,10 +15,10 @@ void TailCallOptimize(Object* meta, Object* cont, Object* env, Object* tail)
 
 void StackNextFrame(Object* meta, Object* cont, Object* env, Object* next)
 {
-  if (IsA(next, &Cell)) {
+  if (Util.isA(next, &Cell)) {
     Continuation.push(cont, Form.new(meta, env, next, Util.length(next), false));
   }
-  else if (IsA(next, &Symbol)) {
+  else if (Util.isA(next, &Symbol)) {
     Object* solved = Env.find(env, next, Util.comp);
     if (solved != NULL) {
       Continuation.push(cont, solved);
@@ -71,14 +71,14 @@ void Apply(Object* meta, Object* cont, Object* form)
 
   Object* command = Form.evaluatedElement(form, 0);
 
-  if (IsA(command, &Lambda)) {
+  if (Util.isA(command, &Lambda)) {
     ApplyLambda(meta, cont, command,
 		Form.evaluatedElements(form, 1),
 		Form.pos(form) - 1);
     return;
   }
 
-  if (IsA(command, &PrimFunc)) {
+  if (Util.isA(command, &PrimFunc)) {
     Continuation.popAndPush(cont, PrimFunc.apply(command,
 						 meta,
 						 Form.evaluatedElements(form, 1),
@@ -86,7 +86,7 @@ void Apply(Object* meta, Object* cont, Object* form)
     return;
   }
 
-  if (IsA(command, &Continuation)) {
+  if (Util.isA(command, &Continuation)) {
     ApplyContinuation(meta, cont, command, form);
     return;
   }
@@ -96,12 +96,12 @@ void Apply(Object* meta, Object* cont, Object* form)
 
 bool StackOperation(Object* meta, Object* cont, Object* top)
 {
-  if (IsA(top, &Exception)) {
+  if (Util.isA(top, &Exception)) {
     Raise(meta, cont);
     return true;
   }
 
-  if (!IsA(top, &Form)) {
+  if (!Util.isA(top, &Form)) {
     Continuation.returnTopToForm(cont);
     return true;
   }
@@ -111,7 +111,7 @@ bool StackOperation(Object* meta, Object* cont, Object* top)
     return true;
   }
     
-  if (Form.pos(top) > 0 && IsA(Form.evaluatedElement(top, 0), &SpecialForm)) {
+  if (Form.pos(top) > 0 && Util.isA(Form.evaluatedElement(top, 0), &SpecialForm)) {
     if (SpecialForm.doAction(Form.evaluatedElement(top, 0), meta, cont)) {
       return true;
     }
@@ -130,7 +130,7 @@ Object* Eval(Object* meta, Object* cont)
   while (true) {
     Object* top = Continuation.top(cont);
 
-    if (!IsA(top, &Form) && Continuation.size(cont) == 1) {
+    if (!Util.isA(top, &Form) && Continuation.size(cont) == 1) {
       return top;
     }
 

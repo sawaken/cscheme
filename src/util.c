@@ -6,6 +6,12 @@
 #include "type/type_alias.h"
 #include "util.h"
 
+static bool isA(Object* obj, void* type)
+{
+  return obj->type == type;
+}
+
+
 static Object* i_list(Object* meta, int length, va_list ap)
 {
   if (length > 0) {
@@ -44,7 +50,7 @@ static Object* symList(Object* meta, Object* (*getSymbol)(Object*, const char*),
 
 static int length(Object* obj)
 {
-  if (IsA(obj, &Cell) && !Cell.empty(obj))
+  if (isA(obj, &Cell) && !Cell.empty(obj))
     return 1 + length(Cell.cdr(obj));
   else
     return 0;
@@ -52,7 +58,7 @@ static int length(Object* obj)
 
 static bool isList(Object* obj)
 {
-  if (!IsA(obj, &Cell))
+  if (!isA(obj, &Cell))
     return false;
   if (Cell.empty(obj))
     return true;
@@ -154,11 +160,11 @@ static Object* ith(Object* list, int i)
 
 static Object* parseParam(Object* meta, Object* param_list, const char* dot)
 {
-  if (IsA(param_list, &Symbol)) {
+  if (isA(param_list, &Symbol)) {
     return Parameter.new(meta, NULL, 0, param_list);
   }
 
-  if (!IsA(param_list, &Cell)) {
+  if (!isA(param_list, &Cell)) {
     return NULL;
   }
 
@@ -187,7 +193,7 @@ static Object* parseParam(Object* meta, Object* param_list, const char* dot)
 static bool isAll(Object** args, int argc, void* type)
 {
   for (int i = 0; i < argc; i++)
-    if (!IsA(args[i], type))
+    if (!isA(args[i], type))
       return false;
   return true;
 }
@@ -196,13 +202,13 @@ static bool isAll(Object** args, int argc, void* type)
 // temporary implimentation
 static char* toStr(Object* obj, char buf[])
 {
-  if (IsA(obj, &Integer)) {
+  if (isA(obj, &Integer)) {
     snprintf(buf, 100, "%d", Integer.to_i(obj));
-  } else if (IsA(obj, &Symbol)) {
+  } else if (isA(obj, &Symbol)) {
     snprintf(buf, 100, "<#symbol: %s>", Symbol.to_s(obj));
-  } else if (IsA(obj, &String)) {
+  } else if (isA(obj, &String)) {
     snprintf(buf, 100, "<#string: %s>", String.to_s(obj));
-  } else if (IsA(obj, &Exception)) {
+  } else if (isA(obj, &Exception)) {
     snprintf(buf, 100, "<#exception: %s>", String.to_s(Exception.take(obj)));
   } else {
     snprintf(buf, 100, "<#object>");
@@ -213,6 +219,6 @@ static char* toStr(Object* obj, char buf[])
 
 
 t_Util Util = {
-  list, symList, length, isList, form, arrayToList, assign, comp, singletonSymbol,
+  isA, list, symList, length, isList, form, arrayToList, assign, comp, singletonSymbol,
   include, listDup, listToArray, ith, parseParam, isAll, toStr
 };

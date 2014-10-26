@@ -86,7 +86,7 @@ TEST_F(EvalSubTest, StackNextFrame_with_unbound_symbol)
   StackNextFrame(meta, cont, env1, next);
   
   ASSERT_EQ(1, C.size(cont));
-  ASSERT_TRUE(IsA(C.top(cont), &Exception));
+  ASSERT_TRUE(Util.isA(C.top(cont), &Exception));
 }
 
 TEST_F(EvalSubTest, StackNextFrame_with_object)
@@ -121,7 +121,7 @@ TEST_F(EvalSubTest, ApplyContinuation_with_invalid_arg)
   ApplyContinuation(meta, cont, alt_cont, form2);
   
   ASSERT_EQ(1, C.size(cont));
-  ASSERT_TRUE(IsA(C.top(cont), &Exception));
+  ASSERT_TRUE(Util.isA(C.top(cont), &Exception));
 }
 
 TEST_F(EvalSubTest, MakeForm)
@@ -152,7 +152,7 @@ TEST_F(EvalSubTest, Apply_fail)
   Apply(meta, cont, form1);
 
   ASSERT_EQ(1, C.size(cont));
-  ASSERT_TRUE(IsA(C.top(cont), &Exception));
+  ASSERT_TRUE(Util.isA(C.top(cont), &Exception));
 }
 
 TEST_F(EvalSubTest, Raise)
@@ -188,6 +188,6 @@ TEST_F(EvalSubTest, simple_case)
   Eval(meta, cont);
 
   ASSERT_EQ(1, C.size(cont));
-  ASSERT_TRUE(IsA(C.top(cont), &Integer));
+  ASSERT_TRUE(Util.isA(C.top(cont), &Integer));
   ASSERT_EQ(6, Integer.to_i(C.top(cont)));
 }

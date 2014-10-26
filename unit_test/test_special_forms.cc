@@ -83,7 +83,7 @@ TEST_F(SFTest, call_cc)
   ASSERT_EQ(dummy4, Form.rawElement(C.top(cont), 0));
 
   Object* cc = Form.rawElement(C.top(cont), 1);
-  ASSERT_TRUE(IsA(cc, &Continuation));
+  ASSERT_TRUE(Util.isA(cc, &Continuation));
   ASSERT_EQ(1, C.size(cc));
   ASSERT_EQ(dummy1, C.top(cc));
 }
@@ -102,7 +102,7 @@ TEST_F(SFTest, lambda)
   ASSERT_TRUE(SpecialForm.doAction(lambda, meta, cont));
 
   ASSERT_EQ(1, C.size(cont));
-  ASSERT_TRUE(IsA(C.top(cont), &Lambda));
+  ASSERT_TRUE(Util.isA(C.top(cont), &Lambda));
   ASSERT_EQ(env, Lambda.env(C.top(cont)));
   ASSERT_EQ(2, Lambda.expc(C.top(cont)));
   ASSERT_EQ(dummy2, *(Lambda.exps(C.top(cont)) + 0));
