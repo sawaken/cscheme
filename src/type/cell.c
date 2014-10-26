@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "type.h"
 
-static void* Type = &Cell;
+static void* Type = &CSCM_Cell;
 
 typedef struct
 {
@@ -51,10 +51,10 @@ static Object* new(Object* meta, Object* car, Object* cdr)
     data->cdr = cdr;
   }
 
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
-t_Cell Cell = {
+CSCM_Cell_T CSCM_Cell = {
   {NULL, apply, NULL, NULL},
   new, car, cdr, empty
 };

@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "type.h"
 
-static void* Type = &Continuation;
+static void* Type = &CSCM_Continuation;
 
 static Object* at(Object* cont, int pos);
 static int size(Object* cont);
@@ -37,14 +37,14 @@ static Object* new(Object* meta, Object* init_cont)
     data->stack = malloc(data->max_size * sizeof(Object*));
   }
   else {
-    data->size = Continuation.size(init_cont);
-    data->max_size = Continuation.max_size(init_cont);
+    data->size = size(init_cont);
+    data->max_size = max_size(init_cont);
     data->stack = malloc(data->max_size * sizeof(Object*));
     for (int i = 0; i < data->size; i++)
-      data->stack[i] = Continuation.at(init_cont, i);
+      data->stack[i] = at(init_cont, i);
   }
 
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
 static Object* top(Object* cont)
@@ -73,7 +73,7 @@ static void erase(Object* cont, int start_pos, int length)
   assert(start_pos < size(cont) && start_pos + length <= size(cont));
 
   for (int i = 0; i < length; i++)
-    MetaObject.unreferred(at(cont, start_pos + i));
+    CSCM_MetaObject.unreferred(at(cont, start_pos + i));
   
   for (int i = start_pos + length; i < size(cont); i++)
     pull(cont)->stack[i - length] = at(cont, i);
@@ -89,7 +89,7 @@ static void pop(Object* cont)
 static void push(Object* cont, Object* obj)
 {
   assert(size(cont) < max_size(cont));
-  MetaObject.referred(pull(cont)->stack[pull(cont)->size++] = obj);
+  CSCM_MetaObject.referred(pull(cont)->stack[pull(cont)->size++] = obj);
 }
 
 static void trans(Object* cont, Object* alt_cont, Object* obj)
@@ -103,8 +103,8 @@ static void trans(Object* cont, Object* alt_cont, Object* obj)
 
 static void returnTopToForm(Object* cont)
 {
-  assert(IsA(at(cont, size(cont) - 2), &Form));
-  Form.back(at(cont, size(cont) - 2), top(cont));
+  assert(IsA(at(cont, size(cont) - 2), &CSCM_Form));
+  CSCM_Form.back(at(cont, size(cont) - 2), top(cont));
   pop(cont);
 }
   
@@ -114,7 +114,7 @@ static void popAndPush(Object*cont, Object* obj)
   erase(cont, size(cont) - 2, 1);
 }
 
-t_Continuation Continuation = {
+CSCM_Continuation_T CSCM_Continuation = {
   {release, apply, NULL, NULL},
   new, top, size, max_size, at,
   erase, pop, push, trans, returnTopToForm, popAndPush

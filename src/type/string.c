@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "type.h"
 
-static void* Type = &String;
+static void* Type = &CSCM_String;
 
 typedef struct
 {
@@ -28,7 +28,7 @@ static Object* newWithRange(Object* meta, const char str[], int s, int t)
     data->str[i - s] = str[i];
   data->str[t - s] = '\0';
 
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
 static Object* new(Object* meta, const char string[])
@@ -41,7 +41,7 @@ static char* to_s(Object* obj)
   return pull(obj)->str;
 }
 
-t_String String = {
+CSCM_String_T CSCM_String = {
   {release, NULL, NULL, NULL},
   new, newWithRange, to_s
 };

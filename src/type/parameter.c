@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include "type.h"
 
-static void* Type = &Parameter;
+static void* Type = &CSCM_Parameter;
 
 typedef struct
 {
@@ -40,7 +40,7 @@ static Object* new(Object* meta, Object* const params[],
     data->params[i] = params[i];
   }
 
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
 static int paramc(Object* param)
@@ -71,7 +71,7 @@ static bool validArgLength(Object* param, int length)
     return length >= paramc(param);
 }
 
-t_Parameter Parameter = {
+CSCM_Parameter_T CSCM_Parameter = {
   {release, apply, NULL, NULL},
   new, paramc, params, rest, at, validArgLength
 };

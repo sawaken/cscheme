@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include "type.h"
 
-static void* Type = &Form;
+static void* Type = &CSCM_Form;
 
 static int pos(Object* form);
 static Object* evaluatedElement(Object* form, int position);
@@ -52,11 +52,11 @@ static Object* new(Object* meta, Object* env, Object* exp,
 
   Object* e = exp;
   for (int i = 0; i < length; i++) {
-    data->raw_elements[i] = Cell.car(e);
-    e = Cell.cdr(e);
+    data->raw_elements[i] = CSCM_Cell.car(e);
+    e = CSCM_Cell.cdr(e);
   }
 
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
 static int pos(Object* form)
@@ -113,8 +113,8 @@ static void back(Object* form, Object* obj)
 
   assert(position < pull(form)->size);
   pull(form)->evaluated_elements[position] = obj;
-  MetaObject.referred(obj);
-  MetaObject.unreferred(pull(form)->raw_elements[position]);
+  CSCM_MetaObject.referred(obj);
+  CSCM_MetaObject.unreferred(pull(form)->raw_elements[position]);
 }
 
 static bool isBody(Object* form)
@@ -122,7 +122,7 @@ static bool isBody(Object* form)
   return pull(form)->body;
 }
 
-t_Form Form = {
+CSCM_Form_T CSCM_Form = {
   {release, apply, NULL, NULL},
   new, pos, restNum, size, env, next,
   evaluatedElement, rawElement, evaluatedElements, rawElements,

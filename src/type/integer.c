@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "type.h"
 
-static void* Type = &Integer;
+static void* Type = &CSCM_Integer;
 
 typedef struct
 {
@@ -14,7 +14,7 @@ static Object* new(Object* meta, int i)
 {
   Data* data = malloc(sizeof(Data));
   data->i = i;
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
 static int to_i(Object* obj)
@@ -30,7 +30,7 @@ static Object* sum(Object* meta, Object** ints, int len)
   return new(meta, sum);
 }
 
-t_Integer Integer = {
+CSCM_Integer_T CSCM_Integer = {
   {NULL, NULL, NULL, NULL},
   new, to_i, sum
 };

@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "type/type.h"
+#include "type/type_alias.h"
 #include "util.h"
 
 #define def(name) static Object* (name)(Object* meta, Object** args, int argc)

@@ -7,7 +7,7 @@
 static void referred(Object*);
 static void release(Object*);
 
-static void* Type = &MetaObject;
+static void* Type = &CSCM_MetaObject;
 
 typedef  struct
 {
@@ -174,13 +174,13 @@ static Object* findSymbol(Object* meta, const char* name,
 
   for (int i = 0; i < pull(meta)->pos; i++) {
     if (os[i] == NULL) continue;
-    if (IsA(os[i], &Symbol) && strcmp(name, Symbol.to_s(os[i])) == 0)
+    if (IsA(os[i], &CSCM_Symbol) && strcmp(name, CSCM_Symbol.to_s(os[i])) == 0)
       return os[i];
   }
   return NULL;
 }
 
-t_MetaObject MetaObject = {
+CSCM_MetaObject_T CSCM_MetaObject = {
   {NULL, NULL, NULL, NULL},
   new, gen, size, pos, referred, unreferred, release, sweep, findSymbol
 };

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "type/type.h"
+#include "type/type_alias.h"
 #include "util.h"
 
 static Object* i_list(Object* meta, int length, va_list ap)

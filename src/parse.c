@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "type/type.h"
+#include "type/type_alias.h"
 #include "parse_util.h"
 #include "parse.h"
 

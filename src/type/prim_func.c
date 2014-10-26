@@ -3,7 +3,7 @@
 #include <string.h>
 #include "type.h"
 
-static void* Type = &PrimFunc;
+static void* Type = &CSCM_PrimFunc;
 
 typedef struct
 {
@@ -25,7 +25,7 @@ static Object* new(Object* meta, const char name[],
   strcpy(data->name, name);
   data->func = func;
 
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
 static Object* apply(Object* pf, Object* meta,
@@ -34,7 +34,7 @@ static Object* apply(Object* pf, Object* meta,
   return pull(pf)->func(meta, args, argc);
 }
 
-t_PrimFunc PrimFunc = {
+CSCM_PrimFunc_T CSCM_PrimFunc = {
   {release, NULL, NULL, NULL},
   new, apply
 };

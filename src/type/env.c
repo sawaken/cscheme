@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "type.h"
 
-static void* Type = &Env;
+static void* Type = &CSCM_Env;
 
 typedef struct
 {
@@ -30,7 +30,7 @@ static Object* new(Object* meta, Object* parent)
   data->parent = parent;
   data->size = 0;
   data->max_size = 10;
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
 static int size(Object* env)
@@ -44,8 +44,8 @@ static void bind(Object* env, Object* key, Object* value)
   assert(pos < pull(env)->max_size);
   pull(env)->key[pos] = key;
   pull(env)->value[pos] = value;
-  MetaObject.referred(key);
-  MetaObject.referred(value);
+  CSCM_MetaObject.referred(key);
+  CSCM_MetaObject.referred(value);
 }
 
 static Object* find(Object* env, Object* key,
@@ -56,13 +56,13 @@ static Object* find(Object* env, Object* key,
       return pull(env)->value[i];
 
   if (pull(env)->parent != NULL) {
-    return Env.find(pull(env)->parent, key, comp);
+    return find(pull(env)->parent, key, comp);
   } else {
     return NULL;
   }
 }
 
-t_Env Env = {
+CSCM_Env_T CSCM_Env = {
   {NULL, apply, NULL, NULL},
   new, size, bind, find
 };

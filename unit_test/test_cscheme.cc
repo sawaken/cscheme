@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <type/type.h>
+#include <type/type_alias.h>
 #include <cscheme.h>
 #include <stdio.h>
 

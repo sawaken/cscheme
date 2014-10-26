@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include "type.h"
 
-static void* Type = &Lambda;
+static void* Type = &CSCM_Lambda;
 
 typedef struct
 {
@@ -39,7 +39,7 @@ static Object* new(Object* meta, Object* env, Object* param,
     data->exps[i] = exps[i];
   }
 
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
 static Object* env(Object* lambda)
@@ -62,7 +62,7 @@ static int expc(Object* lambda)
   return pull(lambda)->expc;
 }
 
-t_Lambda Lambda = {
+CSCM_Lambda_T CSCM_Lambda = {
   {release, apply, NULL, NULL},
   new, env, param, exps, expc
 };

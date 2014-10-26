@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "type.h"
 
-static void* Type = &Exception;
+static void* Type = &CSCM_Exception;
 
 typedef struct
 {
@@ -19,7 +19,7 @@ static Object* new(Object* meta, Object* raised_obj)
 {
   Data* data = malloc(sizeof(Data));
   data->raised_obj = raised_obj;
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
 static Object* take(Object* exception)
@@ -27,7 +27,7 @@ static Object* take(Object* exception)
   return pull(exception)->raised_obj;
 }
 
-t_Exception Exception = {
+CSCM_Exception_T CSCM_Exception = {
   {NULL, apply, NULL, NULL},
   new, take
 };

@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "type.h"
 
-static void* Type = &Dummy;
+static void* Type = &CSCM_Dummy;
 
 typedef struct
 {
@@ -41,7 +41,7 @@ static Object* new(Object* meta, Object* ref)
   data->ref = ref;
   data->ref_count = data->unref_count = 0;
   data->is_released = false;
-  return MetaObject.gen(meta, Type, data);
+  return CSCM_MetaObject.gen(meta, Type, data);
 }
 
 static Object* ref(Object* obj)
@@ -64,7 +64,7 @@ static int unref_count(Object* obj)
   return pull(obj)->unref_count;
 }
 
-t_Dummy Dummy = {
+CSCM_Dummy_T CSCM_Dummy = {
   {release, apply, onReferred, onUnreferred},
   new, ref, isReleased, ref_count, unref_count
 };

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "type/type.h"
+#include "type/type_alias.h"
 #include "initial_bind.h"
 #include "parse.h"
 #include "eval.h"

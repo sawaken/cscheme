@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <util.h>
+#include <type/type_alias.h>
 
 #define I(n) Integer.New(meta, (n))
 #define GI(e) Integer.to_i(e)

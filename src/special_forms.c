@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "type/type.h"
+#include "type/type_alias.h"
 #include "eval.h"
 #include "util.h"
 
