@@ -12,7 +12,7 @@ Release
 -------
 * There are not any release yet.
 
-But, possibly you can compile and try to run interpreter under development in the following way.
+But, possibly you can build and try to run interpreter under development in the following way.
 
     $ git clone https://github.com/sawaken/cscheme.git
     $ cd cscheme
