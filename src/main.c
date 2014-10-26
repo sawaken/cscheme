@@ -5,7 +5,7 @@
 
 int main(void)
 {
-  Interpreter* inter = Cscheme.new();
+  Interpreter* inter = Cscheme.New();
 
   if (REPL_MODE) {
     
