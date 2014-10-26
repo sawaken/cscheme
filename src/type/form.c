@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <stdarg.h>
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 #include "type.h"
 
 static void* Type = &CSCM_Form;
@@ -22,16 +23,16 @@ typedef struct
 
 static bool release(Object* form)
 {
-  free(pull(form)->raw_elements);
-  free(pull(form)->evaluated_elements);
+  free(PULL(form)->raw_elements);
+  free(PULL(form)->evaluated_elements);
   return true;
 }
 
 static void apply(Object* form, void (*proc)(Object*))
 {
-  int size = pull(form)->size, position = pos(form);
+  int size = PULL(form)->size, position = pos(form);
 
-  proc(pull(form)->env);
+  proc(PULL(form)->env);
 
   for (int i = 0; i < size; i++) {
     if (i < position)
@@ -61,65 +62,65 @@ static Object* new(Object* meta, Object* env, Object* exp,
 
 static int pos(Object* form)
 {
-  return pull(form)->pos;
+  return PULL(form)->pos;
 }
 
 static int restNum(Object* form)
 {
-  return pull(form)->size - pull(form)->pos;
+  return PULL(form)->size - PULL(form)->pos;
 }
 
 static int size(Object* form)
 {
-  return pull(form)->size;
+  return PULL(form)->size;
 }
 
 static Object* env(Object* form)
 {
-  return pull(form)->env;
+  return PULL(form)->env;
 }
 
 static Object* next(Object* form)
 {
-  assert(pos(form) < pull(form)->size);
-  return pull(form)->raw_elements[pull(form)->pos];
+  assert(pos(form) < PULL(form)->size);
+  return PULL(form)->raw_elements[PULL(form)->pos];
 }
 
 static Object* evaluatedElement(Object* form, int position)
 {
   assert(position < pos(form));
-  return pull(form)->evaluated_elements[position];
+  return PULL(form)->evaluated_elements[position];
 }
 
 static Object* rawElement(Object* form, int position)
 {
   assert(position >= pos(form));
-  return pull(form)->raw_elements[position];
+  return PULL(form)->raw_elements[position];
 }
 
 static Object** evaluatedElements(Object* form, int start_pos)
 {
-  return pull(form)->evaluated_elements + start_pos;
+  return PULL(form)->evaluated_elements + start_pos;
 }
 
 static Object** rawElements(Object* form, int start_pos)
 {
-  return pull(form)->raw_elements + start_pos;
+  return PULL(form)->raw_elements + start_pos;
 }
 
 static void back(Object* form, Object* obj)
 {
-  int position = pull(form)->pos++;
+  int position = PULL(form)->pos++;
 
-  assert(position < pull(form)->size);
-  pull(form)->evaluated_elements[position] = obj;
+  assert(position < PULL(form)->size);
+  PULL(form)->evaluated_elements[position] = obj;
   CSCM_MetaObject.referred(obj);
-  CSCM_MetaObject.unreferred(pull(form)->raw_elements[position]);
+  CSCM_MetaObject.unreferred(PULL(form)->raw_elements[position]);
 }
 
 static bool isBody(Object* form)
 {
-  return pull(form)->body;
+  return PULL(form)->body;
 }
 
 CSCM_Form_T CSCM_Form = {

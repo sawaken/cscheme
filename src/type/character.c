@@ -3,6 +3,7 @@
 #include "type.h"
 
 static void* Type = &CSCM_Character;
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 
 typedef struct
 {
@@ -18,7 +19,7 @@ static Object* new(Object* meta, char c)
 
 static char to_c(Object* obj)
 {
-  return pull(obj)->c;
+  return PULL(obj)->c;
 }
 
 CSCM_Character_T CSCM_Character = {

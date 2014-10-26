@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "type.h"
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 
 static void* Type = &CSCM_Cell;
 
@@ -15,19 +16,19 @@ typedef struct
 
 static bool empty(Object* obj)
 {
-  return pull(obj)->car == NULL;
+  return PULL(obj)->car == NULL;
 }
 
 static Object* car(Object* obj)
 {
   assert(!empty(obj));
-  return pull(obj)->car;
+  return PULL(obj)->car;
 }
 
 static Object* cdr(Object* obj)
 {
   assert(!empty(obj));
-  return pull(obj)->cdr;
+  return PULL(obj)->cdr;
 }
 
 static void apply(Object* obj, void (*proc)(Object*))

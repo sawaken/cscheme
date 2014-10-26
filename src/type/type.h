@@ -7,7 +7,6 @@
 #define new New
 #endif
 
-#define pull(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 
 typedef struct Object Object;
 struct Object

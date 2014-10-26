@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "type.h"
 
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 static void* Type = &CSCM_Lambda;
 
 typedef struct
@@ -15,15 +16,15 @@ typedef struct
 
 static bool release(Object* lambda)
 {
-  free(pull(lambda)->exps);
+  free(PULL(lambda)->exps);
   return true;
 }
 
 static void apply(Object* lambda, void (*proc)(Object*))
 {
-  proc(pull(lambda)->param);
-  for (int i = 0; i < pull(lambda)->expc; i++)
-    proc(pull(lambda)->exps[i]);
+  proc(PULL(lambda)->param);
+  for (int i = 0; i < PULL(lambda)->expc; i++)
+    proc(PULL(lambda)->exps[i]);
 }
 
 static Object* new(Object* meta, Object* env, Object* param, 
@@ -44,22 +45,22 @@ static Object* new(Object* meta, Object* env, Object* param,
 
 static Object* env(Object* lambda)
 {
-  return pull(lambda)->env;
+  return PULL(lambda)->env;
 }
 
 static Object* param(Object* lambda)
 {
-  return pull(lambda)->param;
+  return PULL(lambda)->param;
 }
 
 static Object** exps(Object* lambda)
 {
-  return pull(lambda)->exps;
+  return PULL(lambda)->exps;
 }
 
 static int expc(Object* lambda)
 {
-  return pull(lambda)->expc;
+  return PULL(lambda)->expc;
 }
 
 CSCM_Lambda_T CSCM_Lambda = {

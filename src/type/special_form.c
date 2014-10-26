@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "type.h"
 
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 static void* Type = &CSCM_SpecialForm;
 
 typedef struct
@@ -14,7 +15,7 @@ typedef struct
 
 static bool release(Object* obj)
 {
-  free(pull(obj)->name);
+  free(PULL(obj)->name);
   return true;
 }
 
@@ -30,7 +31,7 @@ static Object* new(Object* meta, const char name[],
 
 static bool doAction(Object* sf, Object* meta, Object* cont)
 {
-  return pull(sf)->action(meta, cont);
+  return PULL(sf)->action(meta, cont);
 }
 
 CSCM_SpecialForm_T CSCM_SpecialForm = {

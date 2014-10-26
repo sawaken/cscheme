@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include "type.h"
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 
 static void referred(Object*);
 static void release(Object*);
@@ -31,32 +32,32 @@ static Controller* Con(Object* obj)
 
 static GCInfo* gc_info(Object* obj)
 {
-  return pull(obj->meta_obj)->gc_infos[obj->meta_obj_pos];
+  return PULL(obj->meta_obj)->gc_infos[obj->meta_obj_pos];
 }
 
 static void add(Object* meta, Object* obj)
 {
 
-  if (pull(meta)->pos == pull(meta)->max_size) {
+  if (PULL(meta)->pos == PULL(meta)->max_size) {
     int k = 0;
-    for (int i = 0; i < pull(meta)->pos; i++) {
-      if (pull(meta)->objects[i] == NULL) continue;
-      pull(meta)->objects[k] = pull(meta)->objects[i];
-      pull(meta)->gc_infos[k] = pull(meta)->gc_infos[i];
-      pull(meta)->objects[k]->meta_obj_pos = k;
+    for (int i = 0; i < PULL(meta)->pos; i++) {
+      if (PULL(meta)->objects[i] == NULL) continue;
+      PULL(meta)->objects[k] = PULL(meta)->objects[i];
+      PULL(meta)->gc_infos[k] = PULL(meta)->gc_infos[i];
+      PULL(meta)->objects[k]->meta_obj_pos = k;
       k++;
     }
-    pull(meta)->pos = k;
-    pull(meta)->size = k;
+    PULL(meta)->pos = k;
+    PULL(meta)->size = k;
   }
 
-  int pos = pull(meta)->pos++;
-  pull(meta)->objects[pos] = obj;
+  int pos = PULL(meta)->pos++;
+  PULL(meta)->objects[pos] = obj;
   obj->meta_obj     = meta;
   obj->meta_obj_pos = pos;
-  pull(meta)->gc_infos[pos] = malloc(sizeof(GCInfo));
-  memset(pull(meta)->gc_infos[pos], 0, sizeof(GCInfo));
-  pull(meta)->size++;
+  PULL(meta)->gc_infos[pos] = malloc(sizeof(GCInfo));
+  memset(PULL(meta)->gc_infos[pos], 0, sizeof(GCInfo));
+  PULL(meta)->size++;
 }
 
 
@@ -84,7 +85,7 @@ static Object* gen(Object* meta, void* type, void* data)
 {
   Object* object;
 
-  if (pull(meta)->size == pull(meta)->max_size) {
+  if (PULL(meta)->size == PULL(meta)->max_size) {
     printf("meta_object overflow\n");
     return NULL;
   }
@@ -105,12 +106,12 @@ static Object* gen(Object* meta, void* type, void* data)
 
 static int size(Object* meta)
 {
-  return pull(meta)->size;
+  return PULL(meta)->size;
 }
 
 static int pos(Object* meta)
 {
-  return pull(meta)->pos;
+  return PULL(meta)->pos;
 }
 
 static void referred(Object* obj)
@@ -160,9 +161,9 @@ static void release(Object* obj)
     free(obj);
   }
 
-  free(pull(meta_obj)->gc_infos[meta_obj_pos]);  
-  pull(meta_obj)->objects[meta_obj_pos] = NULL;
-  pull(meta_obj)->size--;
+  free(PULL(meta_obj)->gc_infos[meta_obj_pos]);  
+  PULL(meta_obj)->objects[meta_obj_pos] = NULL;
+  PULL(meta_obj)->size--;
 }
 
 static int sweep(Object* obj)
@@ -174,9 +175,9 @@ static int sweep(Object* obj)
 static Object* findSymbol(Object* meta, const char* name,
 			  int (*strcmp)(const char* s1, const char* s2))
 {
-  Object** os = pull(meta)->objects;
+  Object** os = PULL(meta)->objects;
 
-  for (int i = 0; i < pull(meta)->pos; i++) {
+  for (int i = 0; i < PULL(meta)->pos; i++) {
     if (os[i] == NULL) continue;
     if (IsA(os[i], &CSCM_Symbol) && strcmp(name, CSCM_Symbol.to_s(os[i])) == 0)
       return os[i];

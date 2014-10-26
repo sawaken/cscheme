@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "type.h"
 
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 static void* Type = &CSCM_Integer;
 
 typedef struct
@@ -19,14 +20,14 @@ static Object* new(Object* meta, int i)
 
 static int to_i(Object* obj)
 {
-  return pull(obj)->i;
+  return PULL(obj)->i;
 }
 
 static Object* sum(Object* meta, Object** ints, int len)
 {
   int sum = 0;
   for (int i = 0; i < len; i++)
-    sum += pull(ints[i])->i;
+    sum += PULL(ints[i])->i;
   return new(meta, sum);
 }
 

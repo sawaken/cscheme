@@ -3,6 +3,7 @@
 #include <string.h>
 #include "type.h"
 
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 static void* Type = &CSCM_PrimFunc;
 
 typedef struct
@@ -13,7 +14,7 @@ typedef struct
 
 static bool release(Object* pf)
 {
-  free(pull(pf)->name);
+  free(PULL(pf)->name);
   return true;
 }
 
@@ -31,7 +32,7 @@ static Object* new(Object* meta, const char name[],
 static Object* apply(Object* pf, Object* meta,
 		     Object** args, int argc)
 {
-  return pull(pf)->func(meta, args, argc);
+  return PULL(pf)->func(meta, args, argc);
 }
 
 CSCM_PrimFunc_T CSCM_PrimFunc = {

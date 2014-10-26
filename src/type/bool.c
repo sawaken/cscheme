@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "type.h"
 
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 static void* Type = &CSCM_Bool;
 
 typedef struct
@@ -19,7 +20,7 @@ static Object* new(Object* meta, bool b)
 
 static bool to_b(Object* b)
  {
-   return pull(b)->b;
+   return PULL(b)->b;
  }
 
 static Object* select(Object* b, Object* obj1, Object* obj2)

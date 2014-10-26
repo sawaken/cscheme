@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdbool.h>
 #include "type.h"
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 
 static void* Type = &CSCM_Dummy;
 
@@ -15,24 +16,24 @@ typedef struct
 
 static bool release(Object* obj)
 {
-  pull(obj)->is_released = true;
+  PULL(obj)->is_released = true;
   return false;
 }
 
 static void apply(Object* obj, void (*proc)(Object*))
 {
-  if (pull(obj)->ref != NULL)
-    proc(pull(obj)->ref);
+  if (PULL(obj)->ref != NULL)
+    proc(PULL(obj)->ref);
 }
 
 static void onReferred(Object* obj)
 {
-  pull(obj)->ref_count++;
+  PULL(obj)->ref_count++;
 }
 
 static void onUnreferred(Object* obj)
 {
-  pull(obj)->unref_count++;
+  PULL(obj)->unref_count++;
 }
 
 static Object* new(Object* meta, Object* ref)
@@ -46,22 +47,22 @@ static Object* new(Object* meta, Object* ref)
 
 static Object* ref(Object* obj)
 {
-  return pull(obj)->ref;
+  return PULL(obj)->ref;
 }
 
 static bool isReleased(Object* obj)
 {
-  return pull(obj)->is_released;
+  return PULL(obj)->is_released;
 }
 
 static int ref_count(Object* obj)
 {
-  return pull(obj)->ref_count;
+  return PULL(obj)->ref_count;
 }
 
 static int unref_count(Object* obj)
 {
-  return pull(obj)->unref_count;
+  return PULL(obj)->unref_count;
 }
 
 CSCM_Dummy_T CSCM_Dummy = {

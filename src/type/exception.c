@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "type.h"
 
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 static void* Type = &CSCM_Exception;
 
 typedef struct
@@ -12,7 +13,7 @@ typedef struct
 
 static void apply(Object* obj, void (*proc)(Object*))
 {
-  proc(pull(obj)->raised_obj);
+  proc(PULL(obj)->raised_obj);
 }
 
 static Object* new(Object* meta, Object* raised_obj)
@@ -24,7 +25,7 @@ static Object* new(Object* meta, Object* raised_obj)
 
 static Object* take(Object* exception)
 {
-  return pull(exception)->raised_obj;
+  return PULL(exception)->raised_obj;
 }
 
 CSCM_Exception_T CSCM_Exception = {

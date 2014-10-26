@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "type.h"
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 
 static void* Type = &CSCM_String;
 
@@ -14,7 +15,7 @@ typedef struct
 
 static bool release(Object* obj)
 {
-  free(pull(obj)->str);
+  free(PULL(obj)->str);
   return true;
 }
 
@@ -38,7 +39,7 @@ static Object* new(Object* meta, const char string[])
 
 static char* to_s(Object* obj)
 {
-  return pull(obj)->str;
+  return PULL(obj)->str;
 }
 
 CSCM_String_T CSCM_String = {

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "type.h"
 
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 static void* Type = &CSCM_Symbol;
 
 typedef struct
@@ -12,7 +13,7 @@ typedef struct
 
 static bool release(Object* obj)
 {
-  free(pull(obj)->name);
+  free(PULL(obj)->name);
   return true;
 }
 
@@ -35,7 +36,7 @@ static Object* new(Object* meta, const char name[])
 
 static char* to_s(Object* obj)
 {
-  return pull(obj)->name;
+  return PULL(obj)->name;
 }
 
 CSCM_Symbol_T CSCM_Symbol = {

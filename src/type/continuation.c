@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "type.h"
 
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 static void* Type = &CSCM_Continuation;
 
 static Object* at(Object* cont, int pos);
@@ -18,7 +19,7 @@ typedef struct
 
 static bool release(Object* obj)
 {
-  free(pull(obj)->stack);
+  free(PULL(obj)->stack);
   return true;
 }
 
@@ -54,18 +55,18 @@ static Object* top(Object* cont)
 
 static int size(Object* cont)
 {
-  return pull(cont)->size;
+  return PULL(cont)->size;
 }
 
 static int max_size(Object* cont)
 {
-  return pull(cont)->max_size;
+  return PULL(cont)->max_size;
 }
 
 static Object* at(Object* cont, int pos)
 {
   assert(pos < size(cont));
-  return pull(cont)->stack[pos];
+  return PULL(cont)->stack[pos];
 }
 
 static void erase(Object* cont, int start_pos, int length)
@@ -76,9 +77,9 @@ static void erase(Object* cont, int start_pos, int length)
     CSCM_MetaObject.unreferred(at(cont, start_pos + i));
   
   for (int i = start_pos + length; i < size(cont); i++)
-    pull(cont)->stack[i - length] = at(cont, i);
+    PULL(cont)->stack[i - length] = at(cont, i);
 
-  pull(cont)->size -= length;
+  PULL(cont)->size -= length;
 }
 
 static void pop(Object* cont)
@@ -89,7 +90,7 @@ static void pop(Object* cont)
 static void push(Object* cont, Object* obj)
 {
   assert(size(cont) < max_size(cont));
-  CSCM_MetaObject.referred(pull(cont)->stack[pull(cont)->size++] = obj);
+  CSCM_MetaObject.referred(PULL(cont)->stack[PULL(cont)->size++] = obj);
 }
 
 static void trans(Object* cont, Object* alt_cont, Object* obj)

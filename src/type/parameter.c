@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include "type.h"
 
+#define PULL(obj) (assert((obj)->type == Type), (Data*)((obj)->data))
 static void* Type = &CSCM_Parameter;
 
 typedef struct
@@ -14,17 +15,17 @@ typedef struct
 
 static bool release(Object* param)
 {
-  free(pull(param)->params);
+  free(PULL(param)->params);
   return true;
 }
 
 static void apply(Object* param, void (*proc)(Object*))
 {
-  for (int i = 0; i < pull(param)->paramc; i++)
-    proc(pull(param)->params[i]);
+  for (int i = 0; i < PULL(param)->paramc; i++)
+    proc(PULL(param)->params[i]);
 
-  if (pull(param)->rest != NULL)
-    proc(pull(param)->rest);
+  if (PULL(param)->rest != NULL)
+    proc(PULL(param)->rest);
 }
 
 static Object* new(Object* meta, Object* const params[],
@@ -45,22 +46,22 @@ static Object* new(Object* meta, Object* const params[],
 
 static int paramc(Object* param)
 {
-  return pull(param)->paramc;
+  return PULL(param)->paramc;
 }
 
 static Object** params(Object* param)
 {
-  return pull(param)->params;
+  return PULL(param)->params;
 }
 
 static Object* rest(Object* param)
 {
-  return pull(param)->rest;
+  return PULL(param)->rest;
 }
 
 static Object* at(Object* param, int pos)
 {
-  return pull(param)->params[pos];
+  return PULL(param)->params[pos];
 }
 
 static bool validArgLength(Object* param, int length)
