@@ -7,13 +7,17 @@
 
 #include <stdio.h>
 
-void TailCallOptimize(Object* meta, Object* cont, Object* env, Object* tail)
+static void raise(Object* meta, Object* cont);
+static void stackNextFrame(Object* meta, Object* cont, Object* env, Object* next);
+
+
+static void tailCallOptimize(Object* meta, Object* cont, Object* env, Object* tail)
 {
-  StackNextFrame(meta, cont, env, tail);
+  stackNextFrame(meta, cont, env, tail);
   Continuation.erase(cont, Continuation.size(cont) - 2, 1);
 }
 
-void StackNextFrame(Object* meta, Object* cont, Object* env, Object* next)
+static void stackNextFrame(Object* meta, Object* cont, Object* env, Object* next)
 {
   if (Util.isA(next, &Cell)) {
     Continuation.push(cont, Form.new(meta, env, next, Util.length(next), false));
@@ -31,7 +35,7 @@ void StackNextFrame(Object* meta, Object* cont, Object* env, Object* next)
   }
 }
 
-void ApplyContinuation(Object* meta, Object* cont, Object* alt_cont, Object* form)
+static void applyContinuation(Object* meta, Object* cont, Object* alt_cont, Object* form)
 {
   assert(Form.restNum(form) == 0);
 
@@ -42,7 +46,7 @@ void ApplyContinuation(Object* meta, Object* cont, Object* alt_cont, Object* for
   }
 }
 
-Object* MakeForm(Object* meta, Object* lambda, Object** args, int argc)
+static Object* makeForm(Object* meta, Object* lambda, Object** args, int argc)
 {
   Object* exp = Util.arrayToList(meta, Lambda.exps(lambda), Lambda.expc(lambda));
   Object* env = Env.new(meta, Lambda.env(lambda));
@@ -55,24 +59,24 @@ Object* MakeForm(Object* meta, Object* lambda, Object** args, int argc)
 }
 
 
-void ApplyLambda(Object* meta, Object* cont, Object* lambda,
+static void applyLambda(Object* meta, Object* cont, Object* lambda,
 		 Object** args, int argc)
 {
   if (Parameter.validArgLength(Lambda.param(lambda), argc)) {
-    Continuation.popAndPush(cont, MakeForm(meta, lambda, args, argc));
+    Continuation.popAndPush(cont, makeForm(meta, lambda, args, argc));
   } else {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "lambda arg error.")));
   }
 }
 
-void Apply(Object* meta, Object* cont, Object* form)
+static void apply(Object* meta, Object* cont, Object* form)
 {
   assert(Form.restNum(form) == 0);
 
   Object* command = Form.evaluatedElement(form, 0);
 
   if (Util.isA(command, &Lambda)) {
-    ApplyLambda(meta, cont, command,
+    applyLambda(meta, cont, command,
 		Form.evaluatedElements(form, 1),
 		Form.pos(form) - 1);
     return;
@@ -87,17 +91,17 @@ void Apply(Object* meta, Object* cont, Object* form)
   }
 
   if (Util.isA(command, &Continuation)) {
-    ApplyContinuation(meta, cont, command, form);
+    applyContinuation(meta, cont, command, form);
     return;
   }
 
   Continuation.push(cont, Exception.new(meta, String.new(meta, "apply error.")));
 }
 
-bool StackOperation(Object* meta, Object* cont, Object* top)
+static bool stackOperation(Object* meta, Object* cont, Object* top)
 {
   if (Util.isA(top, &Exception)) {
-    Raise(meta, cont);
+    raise(meta, cont);
     return true;
   }
 
@@ -107,7 +111,7 @@ bool StackOperation(Object* meta, Object* cont, Object* top)
   }
 
   if (Form.isBody(top) && Form.restNum(top) == 1) {
-    TailCallOptimize(meta, cont, Form.env(top), Form.next(top));
+    tailCallOptimize(meta, cont, Form.env(top), Form.next(top));
     return true;
   }
     
@@ -120,12 +124,12 @@ bool StackOperation(Object* meta, Object* cont, Object* top)
   return false;
 }
 
-void Raise(Object* meta, Object* cont)
+static void raise(Object* meta, Object* cont)
 {
   Continuation.erase(cont, 0, Continuation.size(cont) - 1);
 }
 
-Object* Eval(Object* meta, Object* cont)
+static Object* eval(Object* meta, Object* cont)
 {
   while (true) {
     Object* top = Continuation.top(cont);
@@ -134,16 +138,25 @@ Object* Eval(Object* meta, Object* cont)
       return top;
     }
 
-    if (StackOperation(meta, cont, top))
+    if (stackOperation(meta, cont, top))
       continue;
 
     if (Form.restNum(top) > 0) {
-      StackNextFrame(meta, cont, Form.env(top), Form.next(top));
+      stackNextFrame(meta, cont, Form.env(top), Form.next(top));
     } else {
-      Apply(meta, cont, top);
+      apply(meta, cont, top);
     }
   }
-
-  printf("Strange exit\n");
-  exit(1);
 }
+
+CSCM_Eval_T CSCM_Eval = {
+  .tailCallOptimize = tailCallOptimize,
+  .stackNextFrame = stackNextFrame,
+  .applyContinuation = applyContinuation,
+  .makeForm = makeForm,
+  .applyLambda = applyLambda,
+  .apply = apply,
+  .stackOperation = stackOperation,
+  .raise = raise,
+  .eval = eval,
+};

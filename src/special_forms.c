@@ -23,7 +23,7 @@ static bool _if(Object* meta, Object* cont)
   Object* b = Form.rawElement(form, 3);
   Object* selected = Bool.select(p, a, b);
 
-  StackNextFrame(meta, cont, Form.env(form), selected);
+  CSCM_Eval.stackNextFrame(meta, cont, Form.env(form), selected);
   Continuation.erase(cont, Continuation.size(cont) - 2, 1);
 
   return true;

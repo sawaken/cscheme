@@ -40,7 +40,7 @@ static void eval(CSCM_Interpreter* inter, const char code[])
   MetaObject.release(exp);
   Continuation.push(cont, form);
   
-  Object* evaluated = Eval(inter->meta, cont);
+  Object* evaluated = CSCM_Eval.eval(inter->meta, cont);
   ret(inter, evaluated);
   MetaObject.release(cont);
 }
