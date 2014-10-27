@@ -8,17 +8,17 @@ typedef struct
   Object* meta;
   Object* top_env;
   Object* evaluated;
-} Interpreter;
+} CSCM_Interpreter;
 
 typedef struct
 {
-  Interpreter* (*New)(void);
-  void (*eval)(Interpreter* inter, const char code[]);
-  void (*ret)(Interpreter* inter, Object* evaluated);
-  Object* (*getEvaluated)(Interpreter* inter);
-  void (*release)(Interpreter* inter);
-  char* (*showLastEvaluated)(Interpreter * inter, char* buf);
-} t_Cscheme;
-extern t_Cscheme Cscheme;
+  CSCM_Interpreter* (*New)(void);
+  void (*eval)(CSCM_Interpreter* inter, const char code[]);
+  void (*ret)(CSCM_Interpreter* inter, Object* evaluated);
+  Object* (*getEvaluated)(CSCM_Interpreter* inter);
+  void (*release)(CSCM_Interpreter* inter);
+  char* (*showLastEvaluated)(CSCM_Interpreter * inter, char* buf);
+} CSCM_T;
+extern CSCM_T CSCM;
 
 #endif

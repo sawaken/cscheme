@@ -8,9 +8,9 @@
 #include "util.h"
 #include "cscheme.h"
 
-static Interpreter* new(void)
+static CSCM_Interpreter* new(void)
 {
-  Interpreter* inter = malloc(sizeof(Interpreter));
+  CSCM_Interpreter* inter = malloc(sizeof(CSCM_Interpreter));
   inter->meta = MetaObject.new(100);
   inter->top_env = Env.new(inter->meta, NULL);
   inter->evaluated = NULL;
@@ -22,7 +22,7 @@ static Interpreter* new(void)
   return inter;
 }
 
-static void ret(Interpreter* inter, Object* evaluated)
+static void ret(CSCM_Interpreter* inter, Object* evaluated)
 {
   MetaObject.referred(evaluated);
   if (inter->evaluated != NULL)
@@ -30,7 +30,7 @@ static void ret(Interpreter* inter, Object* evaluated)
   inter->evaluated = evaluated;
 }
 
-static void eval(Interpreter* inter, const char code[])
+static void eval(CSCM_Interpreter* inter, const char code[])
 {
   Generator g = {inter->meta, Cell.new, Util.singletonSymbol, NULL};
   Object* exp = ParseExp(code, &g);
@@ -45,12 +45,12 @@ static void eval(Interpreter* inter, const char code[])
   MetaObject.release(cont);
 }
 
-static Object* getEvaluated(Interpreter* inter)
+static Object* getEvaluated(CSCM_Interpreter* inter)
 {
   return inter->evaluated;
 }
 
-static void release(Interpreter* inter)
+static void release(CSCM_Interpreter* inter)
 {
   free(inter->meta);
   free(inter->top_env);
@@ -59,14 +59,19 @@ static void release(Interpreter* inter)
   free(inter);
 }
 
-static char* showLastEvaluated(Interpreter * inter, char* buf)
+static char* showLastEvaluated(CSCM_Interpreter * inter, char* buf)
 {
   return Util.toStr(getEvaluated(inter), buf);
 }
 
 
-t_Cscheme Cscheme = {
-  new, eval, ret, getEvaluated, release, showLastEvaluated
+CSCM_T CSCM = {
+  .New = new,
+  .eval = eval,
+  .ret = ret,
+  .getEvaluated = getEvaluated,
+  .release = release,
+  .showLastEvaluated = showLastEvaluated,
 };
   
 

@@ -90,16 +90,14 @@ static bool define(Object* meta, Object* cont)
       return true;
     }
   }
-
-  if (Form.pos(form) == 2) {
-    return false;
-  }
-
+  
   if (Form.pos(form) == 3) {
     Env.bind(Form.env(form), Form.evaluatedElement(form, 1), Form.evaluatedElement(form, 2));
     Continuation.popAndPush(cont, Form.evaluatedElement(form, 1));
     return true;
   }
+
+  return false;
 }
 
 
