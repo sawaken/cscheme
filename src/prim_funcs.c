@@ -42,7 +42,7 @@ def(meta_info)
 #define BIND(meta, getSymbol, env, func, name) Env.bind((env), (getSymbol)((meta), name), \
 							PrimFunc.new((meta), (name), (func)))
 
-void BindPF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env)
+void CSCM_BindPF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env)
 {
   BIND(meta, getSymbol, env, sum_int, "+");
   BIND(meta, getSymbol, env, display, "display");

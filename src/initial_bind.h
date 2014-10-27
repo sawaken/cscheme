@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-  void BindSF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env);
-  void BindPF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env);
+  void CSCM_BindSF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env);
+  void CSCM_BindPF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env);
 
 #ifdef __cplusplus
 }

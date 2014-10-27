@@ -104,7 +104,7 @@ static bool define(Object* meta, Object* cont)
 #define BIND(meta, getSymbol, env, func, name) Env.bind((env), (getSymbol)((meta), name), \
 							SpecialForm.new((meta), (name), (func)))
 
-void BindSF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env)
+void CSCM_BindSF(Object* meta, Object* (*getSymbol)(Object*, const char*), Object* env)
 {
   BIND(meta, getSymbol, env, _if,       "if");
   BIND(meta, getSymbol, env, call_cc,   "call/cc");

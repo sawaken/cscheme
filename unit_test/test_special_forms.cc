@@ -20,7 +20,7 @@ protected:
     dummy2 = Dummy.New(meta, NULL);
     dummy3 = Dummy.New(meta, NULL);
     dummy4 = Dummy.New(meta, NULL);
-    BindSF(meta, Util.singletonSymbol, env);
+    CSCM_BindSF(meta, Util.singletonSymbol, env);
     MetaObject.referred(env);
   }
 };
