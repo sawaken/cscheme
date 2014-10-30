@@ -209,6 +209,15 @@ static bool isNonAuthenticList(Object* obj)
   return isA(obj, &Cell) && !isList(obj);
 }
 
+static Object* drop(Object* list, int n)
+{
+  if (n == 0)
+    return list;
+  else
+    return drop(Cell.cdr(list), n - 1);
+}
+  
+
 // temporary implimentation
 static char* toStr(Object* obj, char buf[])
 {
@@ -247,4 +256,5 @@ t_Util Util = {
   .isAll = isAll,
   .toStr = toStr,
   .isNonAuthenticList = isNonAuthenticList,
+  .drop = drop,
 };

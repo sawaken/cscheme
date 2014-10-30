@@ -25,6 +25,7 @@ typedef struct
   bool (*isAll)(Object** args, int argc, void* type);
   char* (*toStr)(Object* obj, char buf[]);
   bool (*isNonAuthenticList)(Object* obj);
+  Object* (*drop)(Object* list, int n);
 } t_Util;
 extern t_Util Util;
 
