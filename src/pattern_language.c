@@ -1,4 +1,64 @@
 
+static int extractSymbols(Object* pattern_variables, Object* template, Object* buf[], int buf_size)
+{
+  if (Util.isA(template, &Cell) && !Cell.empty(template)) {
+    int car_extracted_size = extractSymbols(pattern_variables, Cell.car(template), buf, buf_size);
+
+    if (car_extracted_size == -1)
+      return -1;
+
+    int cdr_extracted_size = extractSymbols(pattern_variables, Cell.cdr(template),
+					    buf + car_extracted_size,
+					    buf_size - car_extracted_size);
+    if (cdr_extracted_size == -1)
+      return -1;
+    
+    return car_extracted_size + cdr_extracted_size;
+  }
+
+  if (Util.isA(template, &Symbol) && !Util.include(pattern_variables, template)) {
+    if (buf_size == 0)
+      return -1;
+
+    *buf = template;
+    return 1;
+  }
+   
+  return 0;
+}
+
+static Object* convertTemplate(Object* meta, Object* pattern_variables, Object* pattern_assoc,
+			       Object* freeSymbols[], Object* renamedSymbols[],
+			       int symbols_len, Object* template)
+{
+  if (Util.isA(template, &Cell) && Util.include(pattern_variables, Cell.car(template))) {
+    Object* next = Cell.cdr(template);
+
+    if (Util.isA(next, &Cell) && !Cell.empty(next) && isEllipsisSymbol(Cell.car(next)) && Cell.empty(Cell.cdr(next)))
+      return Util.assoc(pattern_assoc, Cell.car(template));
+
+    return Cell.new(meta, Cell.car(Util.assoc(pattern_assoc, Cell.car(template))),
+		    convertTemplate(meta, pattern_variables, pattern_assoc, freeSymbols, renamedSymbols,
+				    symbols_len, Cell.cdr(template)));
+  }
+
+  int found_idx = Util.arrayIndex(template, freeSymbols, symbols_len);
+
+  if (found_idx != -1)
+    return renamedSymbols[found_idx];
+
+  if (Util.isA(template, &Cell)) {
+    return Cell.new(meta,
+		    convertTemplate(meta, pattern_variables, pattern_assoc, freeSymbols, renamedSymbols,
+				    symbols_len, template),
+		    convertTemplate(meta, pattern_variables, pattern_assoc, freeSymbols, renamedSymbols,
+				    symbols_len, template));
+  }
+
+  return template;
+}
+
+
 static bool match(Object* literals, Object* pattern, Object* pattern_env, Object* exp, Object* exp_env)
 {
   if (patternVariableMatch(literals, pattern, pattern_env, exp, exp_env))
@@ -40,8 +100,14 @@ static bool literalMatch(Object* literals, Object* pattern, Object* pattern_env,
 
 static bool listMatch(Object* literals, Object* pattern, Object* pattern_env, Object* exp, Object* exp_env)
 {
-  return Util.isList(pattern) && Util.isList(exp) &&
-    !isEllipsisSymbol(Util.last(pattern)) && matchList(literals, pattern, pattern_env, exp, exp_env, -1);
+  if (Util.isList(pattern) && Util.isList(exp)) {
+    if (Util.length(pattern) > 0 && isEllipsisSymbol(Util.last(pattern)))
+      return false;
+
+    if (matchList(literals, pattern, pattern_env, exp, exp_env, -1))
+      return true;
+  }
+  return false;
 }
 
 static bool nonAuthenticListMatch(Object* literals, Object* pattern, Object* pattern_env, Object* exp, Object* exp_env)
@@ -53,7 +119,7 @@ static bool nonAuthenticListMatch(Object* literals, Object* pattern, Object* pat
 	match(literals, Util.ith(pattern, n), pattern_env, Util.drop(n, exp), exp_env))
       return true;
   }
-  return fale;
+  return false;
 }
 
 static bool ellipsisListMatch(Object* literals, Object* pattern, Object* pattern_env, Object* exp, Object* exp_env)
