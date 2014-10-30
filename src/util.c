@@ -216,6 +216,18 @@ static Object* drop(Object* list, int n)
   else
     return drop(Cell.cdr(list), n - 1);
 }
+
+static Object* last(Object* list)
+{
+  if (!isA(list, &Cell) || Cell.empty(list) || !isA(Cell.cdr(list), &Cell))
+    return NULL;
+
+  if (Cell.empty(Cell.cdr(list)))
+    return Cell.car(list);
+
+  else
+    return last(Cell.cdr(list));
+}
   
 
 // temporary implimentation
@@ -257,4 +269,5 @@ t_Util Util = {
   .toStr = toStr,
   .isNonAuthenticList = isNonAuthenticList,
   .drop = drop,
+  .last = last,
 };

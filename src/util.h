@@ -26,6 +26,7 @@ typedef struct
   char* (*toStr)(Object* obj, char buf[]);
   bool (*isNonAuthenticList)(Object* obj);
   Object* (*drop)(Object* list, int n);
+  Object* (*last)(Object* list);
 } t_Util;
 extern t_Util Util;
 
