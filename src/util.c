@@ -50,10 +50,10 @@ static Object* symList(Object* meta, Object* (*getSymbol)(Object*, const char*),
 
 static int length(Object* obj)
 {
-  if (isA(obj, &Cell) && !Cell.empty(obj))
-    return 1 + length(Cell.cdr(obj));
-  else
+  if (!isA(obj, &Cell) || Cell.empty(obj))
     return 0;
+  else
+    return 1 + length(Cell.cdr(obj));
 }
 
 static bool isList(Object* obj)
