@@ -21,9 +21,10 @@ typedef struct
   bool (*listDup)(Object* list);
   void (*listToArray)(Object* list, Object* array[]);
   Object* (*ith)(Object* list, int i);
-  Object* (*parseParam)(Object* meta, Object* param_list, const char* dot);
+  Object* (*parseParam)(Object* meta, Object* param_list);
   bool (*isAll)(Object** args, int argc, void* type);
   char* (*toStr)(Object* obj, char buf[]);
+  bool (*isNonAuthenticList)(Object* obj);
 } t_Util;
 extern t_Util Util;
 

@@ -158,8 +158,14 @@ static Object* ith(Object* list, int i)
     return ith(Cell.cdr(list), i - 1);
 }
 
-static Object* parseParam(Object* meta, Object* param_list, const char* dot)
+// TODO: (a b . c) should be processed by Parser as NotAuthenticList. 
+// (That means "." is literal for Parser.)
+// So, parseParam should not (cannnot) handle symbol of ".".
+// All parseParam should do is judging which Authetic or NotAuthetic param_list is.
+static Object* parseParam(Object* meta, Object* param_list)
 {
+  char dot[] = ".";
+
   if (isA(param_list, &Symbol)) {
     return Parameter.new(meta, NULL, 0, param_list);
   }
@@ -198,6 +204,10 @@ static bool isAll(Object** args, int argc, void* type)
   return true;
 }
 
+static bool isNonAuthenticList(Object* obj)
+{
+  return isA(obj, &Cell) && !isList(obj);
+}
 
 // temporary implimentation
 static char* toStr(Object* obj, char buf[])
@@ -219,6 +229,22 @@ static char* toStr(Object* obj, char buf[])
 
 
 t_Util Util = {
-  isA, list, symList, length, isList, form, arrayToList, assign, comp, singletonSymbol,
-  include, listDup, listToArray, ith, parseParam, isAll, toStr
+  .isA = isA,
+  .list = list,
+  .symList = symList,
+  .length = length,
+  .isList = isList,
+  .form = form,
+  .arrayToList = arrayToList,
+  .assign = assign,
+  .comp = comp,
+  .singletonSymbol = singletonSymbol,
+  .include = include,
+  .listDup = listDup,
+  .listToArray = listToArray,
+  .ith = ith,
+  .parseParam = parseParam,
+  .isAll = isAll,
+  .toStr = toStr,
+  .isNonAuthenticList = isNonAuthenticList,
 };

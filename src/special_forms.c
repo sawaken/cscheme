@@ -59,7 +59,7 @@ static bool lambda(Object* meta, Object* cont)
     return true;
   }
 
-  Object* param = Util.parseParam(meta, Form.rawElement(form, 1), ".");
+  Object* param = Util.parseParam(meta, Form.rawElement(form, 1));
 
   if (param == NULL) {
     Continuation.push(cont, Exception.new(meta, String.new(meta, "invalid params.")));
