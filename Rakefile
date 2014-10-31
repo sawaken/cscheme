@@ -3,7 +3,7 @@
 C_COMPILER = "gcc -std=c99"
 SRC_DIR = "./src"
 
-TYPES = [:bool, :cell, :character, :continuation, :dummy, :env, :exception, :form,
+TYPES = [:bool, :bound_symbol, :cell, :character, :continuation, :dummy, :env, :exception, :form,
          :integer, :lambda, :meta_object, :parameter, :prim_func, :special_form,
          :string, :symbol]
 

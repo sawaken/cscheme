@@ -5,6 +5,7 @@
 #include "pattern_language.h"
 #include "util.h"
 
+// extracted -> BoundSymbol.new(meta, pattern_env, extracted)
 static int extractSymbols(Object* pattern_variables, Object* template, Object* buf[], int pos, int buf_size)
 {
   if (Util.isA(template, &Cell) && !Cell.empty(template)) {
@@ -21,8 +22,8 @@ static int extractSymbols(Object* pattern_variables, Object* template, Object* b
     return car_extracted_size + cdr_extracted_size;
   }
 
-  if (Util.isA(template, &Symbol) && !Util.include(pattern_variables, template, Util.comp) &&
-      Util.arrayIndex(template, buf, pos) == -1) {
+  if (Util.isSymbol(template) && !Util.include(pattern_variables, template, Util.comp) &&
+      !CSCM_PL.isEllipsisSymbol(template) && Util.arrayIndex(template, buf, pos) == -1) {
 
     if (pos >= buf_size)
       return -1;
@@ -30,7 +31,7 @@ static int extractSymbols(Object* pattern_variables, Object* template, Object* b
     buf[pos] = template;
     return 1;
   }
-   
+  
   return 0;
  }
 
@@ -68,19 +69,21 @@ static Object* convertTemplate(Object* meta, Object* pattern_variables, Object* 
 
 static bool patternVariableMatch(Object* literals, Object* pattern, Object* pattern_env, Object* exp, Object* exp_env)
 {
-  return Util.isA(pattern, &Symbol) && !Util.include(literals, pattern, Util.comp);
+  return Util.isSymbol(pattern) && !Util.include(literals, pattern, Util.comp);
 }
 
+// Symbols in literals are bound to syntax-rule-environment(pattern_env).
+// (identical binding: hoge => hoge)
 static bool literalMatch(Object* literals, Object* pattern, Object* pattern_env, Object* exp, Object* exp_env)
 {
-  if (Util.isA(pattern, &Symbol) && Util.isA(exp, &Symbol) && Util.include(literals, pattern, Util.comp)) {
-    Object* resolution1 = Env.find(pattern_env, pattern, Util.comp);
-    Object* resolution2 = Env.find(exp_env, exp, Util.comp);
+  if (Util.isSymbol(pattern) && Util.isSymbol(exp) && Util.include(literals, pattern, Util.comp)) {
+    Object* resolution1 = Util.resolve(pattern_env, pattern);
+    Object* resolution2 = Util.resolve(exp_env, exp);
 
     if (Util.comp(resolution1, resolution2) == 0)
       return true;
 
-    if (Util.comp(pattern, exp) == 0 && resolution1 == NULL && resolution2 == NULL)
+    if (Util.comp(Util.takeSymbol(pattern), Util.takeSymbol(exp)) == 0 && resolution1 == NULL && resolution2 == NULL)
       return true;
   }
   return false;

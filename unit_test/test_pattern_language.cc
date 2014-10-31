@@ -17,7 +17,7 @@ protected:
 TEST_F(PLTest, extractSymbols_case1)
 {
   Object* ex  = Util.symList(meta, Util.singletonSymbol, 2, "a", "c");
-  Object* ls1 = Util.symList(meta, Util.singletonSymbol, 4, "a", "b", "b", "c");
+  Object* ls1 = Util.symList(meta, Util.singletonSymbol, 5, "a", "b", "b", "c", "...");
 
   Object* buf[100];
   int extracted_num = CSCM_PL.extractSymbols(ex, ls1, buf, 0, 100);

@@ -22,8 +22,9 @@ static void stackNextFrame(Object* meta, Object* cont, Object* env, Object* next
   if (Util.isA(next, &Cell)) {
     Continuation.push(cont, Form.new(meta, env, next, Util.length(next), false));
   }
-  else if (Util.isA(next, &Symbol)) {
-    Object* solved = Env.find(env, next, Util.comp);
+  else if (Util.isSymbol(next)) {
+    Object* solved = Util.resolve(env, next);
+
     if (solved != NULL) {
       Continuation.push(cont, solved);
     } else {

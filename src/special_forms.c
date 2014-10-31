@@ -82,7 +82,7 @@ static bool define(Object* meta, Object* cont)
   }
 
   if (Form.pos(form) == 1) {
-    if (!Util.isA(Form.next(form), &Symbol)) {
+    if (!Util.isSymbol(Form.next(form))) {
       Continuation.push(cont, Exception.new(meta, String.new(meta, "arg should be symbol.")));
       return true;
     } else {

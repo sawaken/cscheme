@@ -13,6 +13,7 @@
 #define PrimFunc     CSCM_PrimFunc
 #define Bool         CSCM_Bool
 #define Character    CSCM_Character
+#define BoundSymbol  CSCM_BoundSymbol
 #define Dummy        CSCM_Dummy
 
 #ifndef __cplusplus

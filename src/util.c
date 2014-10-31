@@ -118,6 +118,7 @@ static Object* singletonSymbol(Object* meta, const char* name)
     return Symbol.new(meta, name);
 }
 
+// stop using as paramParse is modified
 static int i_dotPos(int i, Object* list, const char* dot)
 {
   if (Cell.empty(list))
@@ -166,7 +167,7 @@ static Object* parseParam(Object* meta, Object* param_list)
 {
   char dot[] = ".";
 
-  if (isA(param_list, &Symbol)) {
+  if (Util.isSymbol(param_list)) {
     return Parameter.new(meta, NULL, 0, param_list);
   }
 
@@ -248,7 +249,32 @@ static Object* find(Object* key, Object* alist, int (*comp)(Object*, Object*))
   else
     return find(key, Cell.cdr(alist), comp);
 }
+
+static bool isSymbol(Object* obj)
+{
+  return isA(obj, &Symbol) || isA(obj, &BoundSymbol);
+}
   
+static Object* resolve(Object* env, Object* key)
+{
+  Object* resolved = Env.find(env, key, Util.comp);
+
+  if (resolved == NULL && isA(key, &BoundSymbol))
+    return Env.find(BoundSymbol.env(key), BoundSymbol.symbol(key), Util.comp);
+
+  return resolved;
+}
+
+static Object* takeSymbol(Object* symbol)
+{
+  if (isA(symbol, &Symbol))
+    return symbol;
+
+  if (isA(symbol, &BoundSymbol))
+    return BoundSymbol.symbol(symbol);
+
+  return NULL;
+}
 
 // temporary implimentation
 static char* toStr(Object* obj, char buf[])
@@ -292,4 +318,7 @@ t_Util Util = {
   .last = last,
   .arrayIndex = arrayIndex,
   .find = find,
+  .isSymbol = isSymbol,
+  .resolve = resolve,
+  .takeSymbol = takeSymbol,
 };

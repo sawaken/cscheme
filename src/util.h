@@ -29,6 +29,9 @@ typedef struct
   Object* (*last)(Object* list);
   int (*arrayIndex)(Object* obj, Object** obj_array, int array_len);
   Object* (*find)(Object* key, Object* alist, int (*comp)(Object*, Object*));
+  bool (*isSymbol)(Object* obj);
+  Object* (*resolve)(Object* env, Object* key);
+  Object* (*takeSymbol)(Object* symbol);
 } t_Util;
 extern t_Util Util;
 

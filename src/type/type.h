@@ -179,6 +179,15 @@ typedef struct
 typedef struct
 {
   CSCM_Controller con;
+  Object* (*New)(Object* meta, Object* env, Object* symbol);
+  Object* (*env)(Object* bound_sym);
+  Object* (*symbol)(Object* bound_sym);
+} CSCM_BoundSymbol_T;
+
+
+typedef struct
+{
+  CSCM_Controller con;
   Object* (*New)(Object* meta, Object* ref);
   Object* (*ref)(Object* dummy);
   bool (*isReleased)(Object* dummy);
@@ -203,6 +212,6 @@ extern CSCM_PrimFunc_T     CSCM_PrimFunc;
 extern CSCM_Bool_T         CSCM_Bool;
 extern CSCM_Character_T    CSCM_Character;
 extern CSCM_Dummy_T        CSCM_Dummy;
-
+extern CSCM_BoundSymbol_T  CSCM_BoundSymbol;
 
 #endif
