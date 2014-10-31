@@ -5,28 +5,29 @@
 #include "pattern_language.h"
 #include "util.h"
 
-static int extractSymbols(Object* pattern_variables, Object* template, Object* buf[], int buf_size)
+static int extractSymbols(Object* pattern_variables, Object* template, Object* buf[], int pos, int buf_size)
 {
   if (Util.isA(template, &Cell) && !Cell.empty(template)) {
-    int car_extracted_size = CSCM_PL.extractSymbols(pattern_variables, Cell.car(template), buf, buf_size);
+    int car_extracted_size = CSCM_PL.extractSymbols(pattern_variables, Cell.car(template), buf, pos, buf_size);
 
     if (car_extracted_size == -1)
       return -1;
 
     int cdr_extracted_size = CSCM_PL.extractSymbols(pattern_variables, Cell.cdr(template),
-						    buf + car_extracted_size,
-						    buf_size - car_extracted_size);
+						    buf, pos + car_extracted_size, buf_size);
     if (cdr_extracted_size == -1)
       return -1;
     
     return car_extracted_size + cdr_extracted_size;
   }
 
-  if (Util.isA(template, &Symbol) && !Util.include(pattern_variables, template, Util.comp)) {
-    if (buf_size == 0)
+  if (Util.isA(template, &Symbol) && !Util.include(pattern_variables, template, Util.comp) &&
+      Util.arrayIndex(template, buf, pos) == -1) {
+
+    if (pos >= buf_size)
       return -1;
 
-    *buf = template;
+    buf[pos] = template;
     return 1;
   }
    

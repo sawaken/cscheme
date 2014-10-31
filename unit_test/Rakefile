@@ -60,6 +60,12 @@ TESTS = {
                         *TYPES.map{|t| "../src/type/#{t}.o"},
                        ],
 
+  "test_pattern_language" => ["test_pattern_language.o",
+                              "../src/util.o",
+                              "../src/pattern_language.o",
+                              *TYPES.map{|t| "../src/type/#{t}.o"},
+                             ],
+
   "type/test_integer" => ["type/test_integer.o",
                           "../src/type/meta_object.o",
                           "../src/type/integer.o",

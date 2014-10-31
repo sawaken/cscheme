@@ -1,10 +1,14 @@
+#include "type/type.h"
+
+#ifndef PATTERN_LANGUAGE_H
+#define PATTERN_LANGUAGE_H
 
 typedef struct
 {
-  int (*extractSymbols)(Object* pattern_variables, Object* template, Object* buf[], int buf_size);
+  int (*extractSymbols)(Object* pattern_variables, Object* template_, Object* buf[], int pos, int buf_size);
   Object* (*convertTemplate)(Object* meta, Object* pattern_variables, Object* pattern_assoc,
 			     Object* freeSymbols[], Object* renamedSymbols[],
-			     int symbols_len, Object* template);
+			     int symbols_len, Object* template_);
   bool (*patternVariableMatch)(Object* literals, Object* pattern, Object* pattern_env, Object* exp, Object* exp_env);
   bool (*literalMatch)(Object* literals, Object* pattern, Object* pattern_env, Object* exp, Object* exp_env);
   bool (*listMatch)(Object* literals, Object* pattern, Object* pattern_env, Object* exp, Object* exp_env);
@@ -18,3 +22,5 @@ typedef struct
 } CSCM_PL_T;
 
 extern CSCM_PL_T CSCM_PL;
+
+#endif 
