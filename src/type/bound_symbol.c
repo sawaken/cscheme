@@ -24,6 +24,8 @@ static Object* new(Object* meta, Object* env, Object* symbol)
   data->env = env;
   data->symbol = symbol;
 
+  asert(symbol->type == &CSCM_Symbol);
+
   return CSCM_MetaObject.gen(meta, Type, data);
 }
 
@@ -34,10 +36,7 @@ static Object* env(Object* bound_sym)
 
 static Object* symbol(Object* bound_sym)
 {
-  if (PULL(bound_sym)->symbol->type == Type)
-    return symbol(PULL(bound_sym)->symbol);
-  else
-    return PULL(bound_sym)->symbol;
+  return PULL(bound_sym)->symbol;
 }
 
 CSCM_BoundSymbol_T CSCM_BoundSymbol = {
