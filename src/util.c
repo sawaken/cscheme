@@ -228,6 +228,26 @@ static Object* last(Object* list)
   else
     return last(Cell.cdr(list));
 }
+
+static int arrayIndex(Object* obj, Object** obj_array, int array_len)
+{
+  for (int i = 0; i < array_len; i++) {
+    if (obj_array[i] == obj) return i;
+  }
+  return -1;
+}
+
+static Object* find(Object* key, Object* alist, int (*comp)(Object*, Object*))
+{
+  if (Cell.empty(alist))
+    return NULL;
+
+  if (comp(key, Cell.car(Cell.car(alist))) == 0)
+    return Cell.car(Cell.cdr(Cell.car(alist)));
+
+  else
+    return find(key, Cell.cdr(alist), comp);
+}
   
 
 // temporary implimentation
@@ -270,4 +290,6 @@ t_Util Util = {
   .isNonAuthenticList = isNonAuthenticList,
   .drop = drop,
   .last = last,
+  .arrayIndex = arrayIndex,
+  .find = find,
 };

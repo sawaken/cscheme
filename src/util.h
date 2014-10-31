@@ -27,6 +27,8 @@ typedef struct
   bool (*isNonAuthenticList)(Object* obj);
   Object* (*drop)(Object* list, int n);
   Object* (*last)(Object* list);
+  int (*arrayIndex)(Object* obj, Object** obj_array, int array_len);
+  Object* (*find)(Object* key, Object* alist, int (*comp)(Object*, Object*));
 } t_Util;
 extern t_Util Util;
 
