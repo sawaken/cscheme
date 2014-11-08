@@ -22,7 +22,7 @@ static int extractSymbols(Object* pattern_variables, Object* template, Object* b
   }
 
   if (Util.isA(template, &Symbol) && !Util.include(pattern_variables, template, Util.comp) &&
-      Util.arrayIndex(template, buf, pos) == -1) {
+      !CSCM_PL.isEllipsisSymbol(template) && Util.arrayIndex(template, buf, pos) == -1) {
 
     if (pos >= buf_size)
       return -1;
